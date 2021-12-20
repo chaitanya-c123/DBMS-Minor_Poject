@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html leng="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+        <title>Vehicle list</title>
+     <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+      <div class="box" id="heading">
+        <h1>Vehicle List</h1>
+      </div>
+      <div class="box">
+        <% newListItems.forEach(function(item){%>
+                <div class="item">
+                    <p>
+                        <h1><%=item.modelName%></h1>
+                        <p>Car Year = <%=item.carYear%></p>
+                        <p>Car Number = <%=item.carNo%></p>
+                        <p>Car Transmission = <%=item.carTrans%></p>
+                        <p>Car Rate = <%=item.carRate%></p>
+                        <form action="/delete" method="post">
+                         <button type="submit" name="deleted" value="<%=item._id%>">Delete</button>
+                        </form>
+                        <form action="/addTo" method="post">
+                          <button type="submit" name="addTo" value="<%=item._id%>">Add to list</button>
+                         </form>
+                        </p>
+                       
+              </div>
+         <%}) %>
+         <form class="item" action="/home" method="post">
+            <button type="submit" name="list" value=""><a href="/add">Add</a></button>
+          </form>
+    </div>
+    
+    </body>
+</html>

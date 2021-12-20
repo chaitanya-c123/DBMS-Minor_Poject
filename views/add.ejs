@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html leng="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+        <title>Add vehicle</title>
+     <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+    <form action="/add" method="post">
+      <div class="box" id="heading">
+        <h1>Please fill the details of new Vehicle</h1>
+        <div class="mb-3">
+            <label  class="form-label">Model name</label>
+            <input type="text" name="modelName" class="form-control" placeholder="Enter the Car model">
+          </div>
+          <div class="mb-3">
+            <label  class="form-label">Car Year</label>
+            <input type="text" name="carYear" class="form-control"  placeholder="Enter car year">
+          </div>
+          <div class="mb-3">
+            <label  class="form-label">Car Number</label>
+            <input type="text" name="carNo" class="form-control"  placeholder="Car number">
+          </div>
+          <div class="mb-3">
+            <label  class="form-label">Car transmission</label>
+            <input type="text" name="carTrans"  class="form-control"  placeholder="car transmission">
+          </div>
+          <div class="mb-3">
+            <label  class="form-label">Car rate per Kilometer</label>
+            <input type="text" name="carRate" class="form-control"  placeholder="Rate per km">
+          </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</div>
+</form>
+    
+    </body>
+</html>
