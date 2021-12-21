@@ -17,7 +17,16 @@ mongoose.connect("mongodb://localhost:27017/rentalDB",{useNewUrlParser:true});
 const userSchema=new mongoose.Schema({
     email:String,
     password:String
-})
+});
+
+const usercSchema= new mongoose.Schema({
+    email:String,
+    password:String,
+    name:String,
+    address:String,
+    phonenumber:String
+
+});
 
 const vehicleSchema={
     modelName:String,
@@ -36,15 +45,36 @@ const availVehicleSchema={
 let vehicleList=[];
 let availVehicleList=[];
 const User=new mongoose.model("User",userSchema);
+const Userc=new mongoose.model("Userc",usercSchema);
 const Vehicle=mongoose.model("Vehicle",vehicleSchema);
 const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
 
 app.get("/",function(req,res){
+    res.render("homepage");
+});
+
+app.get("/loginhome",function(req,res){
     res.render("loginhome");
 });
+
+app.get("/homec",function(req,res){
+
+    res.render("homec");
+});
+
 app.get("/login",function(req,res){
   res.render("login");
 });
+
+app.get("/registerc",function(req,res){
+    res.render("registerc");
+});
+
+app.get("/loginc",function(req,res){
+
+    res.render("loginc");
+    
+    });
 
 const newUser=new User({
     email:"defg",
@@ -162,6 +192,49 @@ app.post("/addTo",function(req,res){
 
     })
     res.redirect("/home");
+});
+
+app.post("/registerc",function(req,res){
+
+    const newUser=new Userc({
+    email:req.body.cusername,
+    password:md5(req.body.cpassword),
+    name:req.body.cname,
+    address:req.body.caddress,
+    phonenumber:req.body.cpno
+    });
+    newUser.save();
+    // newUser.save(function(err){
+    //   if(err){
+    //     console.log(err);
+    //   }/*else{
+    //     res.redirect("/home");
+    //   }*/
+    // });
+    // res.redirect("/home");
+    res.redirect("/customer");
+  });
+
+  app.post("/loginc",function(req,res){
+    const username=req.body.username;
+    const password=md5(req.body.password);
+
+    Userc.findOne({email:username},function(err,foundUser){
+        if(err){
+            console.log(err);
+        }
+          else{if(foundUser){
+              if(foundUser.password===password){
+                // res.render("secrets"); 
+                res.redirect("/customer");
+              }
+          }
+
+        }
+
+
+
+    });
 });
 
 app.listen(3000,function(){
