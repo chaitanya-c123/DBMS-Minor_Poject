@@ -9,16 +9,37 @@
     </head>
     <body>
       <div class="box" id="heading">
-        <h1>Vehicle List</h1>
+        <h1>Available Vehicle List</h1>
       </div>
       <div class="box">
-      
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Model Name</th>
+            <th scope="col">Car Year</th>
+            <th scope="col">Car Number</th>
+            <th scope="col">Car Transmission</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <% for(var i=0;i<newListItems.length;i++){ %>
+          <div class="item">
+                  <tbody>
+                    <tr>
+                      <th scope="row"><%=i+1%></th>
+                      <td><%=newListItems[i].modelName%></td>
+                      <td><%=newListItems[i].carYear%></td>
+                      <td><%=newListItems[i].carNo%></td>
+                      <td><%=newListItems[i].carTrans%></td>
+                      <td><%=newListItems[i].carRate%></td>
+                    </tr>
+               
+                 
+        </div>
+   <%} %>
+  </table>
                        
-              </div>
-         <%}) %>
-         <form class="item" action="/" method="post">
-            <button type="submit" name="list" value=""><a href="/add">Add</a></button>
-          </form>
     </div>
     
     </body>

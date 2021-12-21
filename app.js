@@ -26,32 +26,25 @@ const vehicleSchema={
     carTrans:String,
     carRate:Number
 };
+const availVehicleSchema={
+    modelName:String,
+    carYear:String,
+    carNo:String,
+    carTrans:String,
+    carRate:Number
+};
 let vehicleList=[];
+let availVehicleList=[];
 const User=new mongoose.model("User",userSchema);
 const Vehicle=mongoose.model("Vehicle",vehicleSchema);
+const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
+
 app.get("/",function(req,res){
-    /* Vehicle.find({},function(err,vehicleList){
-        if(vehicleList.length>0)
-        {
-            res.render("home",{newListItems:vehicleList});
-         }
-         if(err)
-         {
-             console.log(err);
-        }
-        else{
-            console.log("Successfully shown");
-        }
-    });*/
     res.render("loginhome");
-    
 });
 app.get("/login",function(req,res){
-
-res.render("login");
-
-})
-
+  res.render("login");
+});
 
 const newUser=new User({
     email:"defg",
@@ -99,6 +92,23 @@ app.get("/home",function(req,res){
     });
 
 })
+app.get("/customer",function(req,res){
+    AvailVehicle.find({},function(err,availVehicleList){
+        if(availVehicleList.length>0)
+        {
+            res.render("customer",{newListItems:availVehicleList});
+        }
+        if(err)
+        {
+            console.log(err);
+        }
+        else{
+            console.log("Successfully customer list shown");
+        }
+    });
+
+});
+
 app.get("/add",function(req,res){
     res.render("add");
 });
@@ -133,6 +143,27 @@ app.post("/delete",function(req,res){
         }
     })
 });
+app.post("/addTo",function(req,res){
+    const vehicleId=req.body.addTo;
+    Vehicle.findById(vehicleId,function(err,avl){
+        if(!err){
+        const availvehicle=new AvailVehicle({
+            modelName:avl.modelName,
+            carYear:avl.carYear,
+            carNo:avl.carNo,
+            carTrans:avl.carTrans,
+            carRate:avl.carRate
+        });
+        availvehicle.save();
+    }
+    else{
+        console.log(err);
+    }
+
+    })
+    res.redirect("/home");
+});
+
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
 });
