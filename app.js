@@ -45,6 +45,19 @@ app.get("/",function(req,res){
 app.get("/login",function(req,res){
   res.render("login");
 });
+app.get("/homepage",function(req,res){
+    res.render("homepage");
+  });
+  app.get("/homec",function(req,res){
+    res.render("homec");
+  });
+  app.get("/loginc",function(req,res){
+    res.render("loginc");
+  });
+  app.get("/registerc",function(req,res){
+    res.render("registerc");
+  });
+
 
 const newUser=new User({
     email:"defg",
@@ -108,7 +121,26 @@ app.get("/customer",function(req,res){
     });
 
 });
+app.post("/registerc",function(req,res){
 
+    const newUser=new Userc({
+    email:req.body.cusername,
+    password:md5(req.body.cpassword),
+    name:req.body.cname,
+    address:req.body.caddress,
+    phonenumber:req.body.cpno
+    });
+    newUser.save();
+    newUser.save(function(err){
+      if(err){
+        console.log(err);
+      }else{
+        res.redirect("/customer");
+      }
+    });
+    
+    
+  });
 app.get("/add",function(req,res){
     res.render("add");
 });
@@ -145,24 +177,32 @@ app.post("/delete",function(req,res){
 });
 app.post("/addTo",function(req,res){
     const vehicleId=req.body.addTo;
+    
     Vehicle.findById(vehicleId,function(err,avl){
         if(!err){
-        const availvehicle=new AvailVehicle({
-            modelName:avl.modelName,
-            carYear:avl.carYear,
-            carNo:avl.carNo,
-            carTrans:avl.carTrans,
-            carRate:avl.carRate
-        });
-        availvehicle.save();
-    }
-    else{
-        console.log(err);
-    }
-
-    })
+            AvailVehicle.exists({name:avl.modelName},function(err,doc){
+             if(!err){
+                if(!doc)
+                {
+                    const availvehicle=new AvailVehicle({
+                        modelName:avl.modelName,
+                        carYear:avl.carYear,
+                        carNo:avl.carNo,
+                        carTrans:avl.carTrans,
+                        carRate:avl.carRate 
+                    });
+                availvehicle.save();
+                document.getElementById("addButton").addEventListener("click",(e)=>{
+                    e.innerText="Added";
+                });
+                }
+            }
+            });
+        }
+      });
     res.redirect("/home");
 });
+
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
