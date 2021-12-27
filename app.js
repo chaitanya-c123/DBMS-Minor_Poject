@@ -44,10 +44,23 @@ const availVehicleSchema={
 };
 let vehicleList=[];
 let availVehicleList=[];
+let bookedVehicleList=[];
 const User=new mongoose.model("User",userSchema);
 const Userc=new mongoose.model("Userc",usercSchema);
 const Vehicle=mongoose.model("Vehicle",vehicleSchema);
 const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
+const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
+
+
+
+// const defVehicle=new Vehicle({
+//     modelName:"Swift",
+//     carYear:"2019",
+//     carNo:"KA-21-2345",
+//     carTrans:"Petrol",
+//     carRate:"17"
+// });
+// defVehicle.save();
 
 app.get("/",function(req,res){
     res.render("homepage");
@@ -138,6 +151,23 @@ app.get("/customer",function(req,res){
     });
 
 });
+app.get("/booked",function(req,res){
+  BookedVehicle.find({},function(err,bookedVehicleList){
+      if(bookedVehicleList.length>0)
+      {
+          res.render("booked",{newListItems:bookedVehicleList});
+      }
+      if(err)
+      {
+          console.log(err);
+      }
+      else{
+          console.log("booked");
+      }
+
+  })
+
+});
 
 app.get("/add",function(req,res){
     res.render("add");
@@ -193,6 +223,30 @@ app.post("/addTo",function(req,res){
     })
     res.redirect("/home");
 });
+app.post("/click",function(req,res){
+const vehicleId=req.body.click;
+AvailVehicle.findById(vehicleId,function(err,book){
+    if(!err){
+    const bookvehicle=new BookedVehicle({
+        modelName:book.modelName,
+        carYear:book.carYear,
+        carNo:book.carNo,
+        carTrans:book.carTrans,
+        carRate:book.carRate
+
+    });
+    bookvehicle.save();
+
+    }
+    else{
+        console.log(err);
+    }
+});
+ 
+res.redirect("/customer");
+
+
+})
 
 app.post("/registerc",function(req,res){
 
@@ -225,7 +279,6 @@ app.post("/registerc",function(req,res){
         }
           else{if(foundUser){
               if(foundUser.password===password){
-                // res.render("secrets"); 
                 res.redirect("/customer");
               }
           }
@@ -236,6 +289,7 @@ app.post("/registerc",function(req,res){
 
     });
 });
+
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
