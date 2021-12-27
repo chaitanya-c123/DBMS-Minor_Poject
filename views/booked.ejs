@@ -9,7 +9,7 @@
     </head>
     <body>
       <div class="box" id="heading">
-        <h1>Available Vehicle List</h1>
+        <h1>Booked Vehicle List</h1>
       </div>
       <div class="box">
         <table class="table">
@@ -33,9 +33,7 @@
                       <td><%=newListItems[i].carNo%></td>
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
-                      <td> <form action="/click" method="post">
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>" onclick="this.disabled='disabled';">click</button>
-                       </form></td>
+                      
                     </tr>
                
                  
