@@ -52,11 +52,30 @@ const userDetailSchema=new mongoose.Schema({
 });
 let vehicleList=[];
 let availVehicleList=[];
+let bookedVehicleList=[];
 const User=new mongoose.model("User",userSchema);
 const Userc=new mongoose.model("Userc",usercSchema);
+
 const Vehicle=new mongoose.model("Vehicle",vehicleSchema);
 const AvailVehicle=new mongoose.model("AvailVehicle",vehicleSchema);
 const UserDetail=new mongoose.model("UserDetail",userDetailSchema);
+
+const Vehicle=mongoose.model("Vehicle",vehicleSchema);
+const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
+const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
+
+
+
+// const defVehicle=new Vehicle({
+//     modelName:"Swift",
+//     carYear:"2019",
+//     carNo:"KA-21-2345",
+//     carTrans:"Petrol",
+//     carRate:"17"
+// });
+// defVehicle.save();
+
+
 app.get("/",function(req,res){
     res.render("homepage");
 });
@@ -150,6 +169,25 @@ app.get("/customer",function(req,res){
     });
 
 });
+
+app.get("/booked",function(req,res){
+  BookedVehicle.find({},function(err,bookedVehicleList){
+      if(bookedVehicleList.length>0)
+      {
+          res.render("booked",{newListItems:bookedVehicleList});
+      }
+      if(err)
+      {
+          console.log(err);
+      }
+      else{
+          console.log("booked");
+      }
+
+  })
+
+});
+
 app.get("/add",function(req,res){
     res.render("add");
 });
@@ -208,6 +246,32 @@ app.post("/addTo",function(req,res){
       });
     res.redirect("/home");
 });
+
+app.post("/click",function(req,res){
+const vehicleId=req.body.click;
+AvailVehicle.findById(vehicleId,function(err,book){
+    if(!err){
+    const bookvehicle=new BookedVehicle({
+        modelName:book.modelName,
+        carYear:book.carYear,
+        carNo:book.carNo,
+        carTrans:book.carTrans,
+        carRate:book.carRate
+
+    });
+    bookvehicle.save();
+
+    }
+    else{
+        console.log(err);
+    }
+});
+ 
+res.redirect("/customer");
+
+
+})
+
 app.post("/registerc",function(req,res){
 
     var newUser=new Userc({
@@ -252,36 +316,8 @@ app.get("/users",function(req,res){
     })
     res.render("users",{newListItems:userDetails1});
 });
-app.post("/select",function(req,res){
-    const vehicleId=req.body.Select;
-    console.log(username);
-    const vehicleDetails=[];
-    AvailVehicle.findById(vehicleId,function(err,avl){
-        if(avl){
-        Userc.find({email:username},function(error,user){
-            if(error){
-                console.log(error);
-            }
-              else{if(user){
-                  const userdetails=new UserDetail({
-                      userEmail:user.email,
-                      userName:user.name,
-                      userAdress:user.adress,
-                      userPhonenumber:user.phonenumber,
-                      modelName:avl.modelName,
-                      carNumber:avl.carNo
 
-                  });
-                  userdetails.save();
-                }
-              }
-            
-        });
-    }
 
-    });
-    res.redirect("/users");
-});
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
