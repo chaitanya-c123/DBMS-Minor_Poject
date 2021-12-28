@@ -17,7 +17,16 @@ mongoose.connect("mongodb://localhost:27017/rentalDB",{useNewUrlParser:true});
 const userSchema=new mongoose.Schema({
     email:String,
     password:String
-})
+});
+
+const usercSchema= new mongoose.Schema({
+    email:String,
+    password:String,
+    name:String,
+    address:String,
+    phonenumber:String
+
+});
 
 const vehicleSchema={
     modelName:String,
@@ -33,23 +42,39 @@ const availVehicleSchema={
     carTrans:String,
     carRate:Number
 };
+const userDetailSchema=new mongoose.Schema({
+    userEmail:String,
+    userName:String,
+    userAdress:String,
+    userPhonenumber:String,
+    modelName:String,
+    carNumber:String
+});
 let vehicleList=[];
 let availVehicleList=[];
 const User=new mongoose.model("User",userSchema);
-const Vehicle=mongoose.model("Vehicle",vehicleSchema);
-const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
-
+const Userc=new mongoose.model("Userc",usercSchema);
+const Vehicle=new mongoose.model("Vehicle",vehicleSchema);
+const AvailVehicle=new mongoose.model("AvailVehicle",vehicleSchema);
+const UserDetail=new mongoose.model("UserDetail",userDetailSchema);
 app.get("/",function(req,res){
+    res.render("homepage");
+});
+
+app.get("/loginhome",function(req,res){
     res.render("loginhome");
 });
+
+app.get("/homec",function(req,res){
+
+    res.render("homec");
+});
+
 app.get("/login",function(req,res){
   res.render("login");
 });
 app.get("/homepage",function(req,res){
     res.render("homepage");
-  });
-  app.get("/homec",function(req,res){
-    res.render("homec");
   });
   app.get("/loginc",function(req,res){
     res.render("loginc");
@@ -104,12 +129,16 @@ app.get("/home",function(req,res){
         }
     });
 
-})
+});
 app.get("/customer",function(req,res){
     AvailVehicle.find({},function(err,availVehicleList){
         if(availVehicleList.length>0)
         {
             res.render("customer",{newListItems:availVehicleList});
+        }
+        else
+        {
+            res.render("customer",{newListItems:"No vehicles are available"});
         }
         if(err)
         {
@@ -121,26 +150,6 @@ app.get("/customer",function(req,res){
     });
 
 });
-app.post("/registerc",function(req,res){
-
-    const newUser=new Userc({
-    email:req.body.cusername,
-    password:md5(req.body.cpassword),
-    name:req.body.cname,
-    address:req.body.caddress,
-    phonenumber:req.body.cpno
-    });
-    newUser.save();
-    newUser.save(function(err){
-      if(err){
-        console.log(err);
-      }else{
-        res.redirect("/customer");
-      }
-    });
-    
-    
-  });
 app.get("/add",function(req,res){
     res.render("add");
 });
@@ -192,9 +201,6 @@ app.post("/addTo",function(req,res){
                         carRate:avl.carRate 
                     });
                 availvehicle.save();
-                document.getElementById("addButton").addEventListener("click",(e)=>{
-                    e.innerText="Added";
-                });
                 }
             }
             });
@@ -202,7 +208,80 @@ app.post("/addTo",function(req,res){
       });
     res.redirect("/home");
 });
+app.post("/registerc",function(req,res){
 
+    var newUser=new Userc({
+    email:req.body.cusername,
+    password:md5(req.body.cpassword),
+    name:req.body.cname,
+    address:req.body.caddress,
+    phonenumber:req.body.cpno
+    });
+    newUser.save();
+    res.redirect("/customer");
+  });
+var username;
+  app.post("/loginc",function(req,res){
+    username=req.body.username;
+    const password=md5(req.body.password);
+
+    Userc.findOne({email:username},function(err,foundUser){
+        if(err){
+            console.log(err);
+        }
+          else{if(foundUser){
+              if(foundUser.password===password){
+                res.redirect("/customer");
+            }
+          }
+
+        }
+
+    });
+});
+const userDetails1=[];
+app.get("/users",function(req,res){
+    UserDetail.find({},function(err,userDetails1){
+          if(userDetails1.length>0)
+          {
+              res.render("users",{newListItems:userDetails1});
+          }
+          if(err){
+              console.log(err);
+          }
+    })
+    res.render("users",{newListItems:userDetails1});
+});
+app.post("/select",function(req,res){
+    const vehicleId=req.body.Select;
+    console.log(username);
+    const vehicleDetails=[];
+    AvailVehicle.findById(vehicleId,function(err,avl){
+        if(avl){
+        Userc.find({email:username},function(error,user){
+            if(error){
+                console.log(error);
+            }
+              else{if(user){
+                  const userdetails=new UserDetail({
+                      userEmail:user.email,
+                      userName:user.name,
+                      userAdress:user.adress,
+                      userPhonenumber:user.phonenumber,
+                      modelName:avl.modelName,
+                      carNumber:avl.carNo
+
+                  });
+                  userdetails.save();
+                }
+              }
+            
+        });
+    }
+
+    });
+    res.redirect("/users");
+});
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
