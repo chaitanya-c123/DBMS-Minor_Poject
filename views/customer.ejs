@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
-        <title>Vehicle list</title>
+        <title>customer</title>
      <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
@@ -33,6 +33,9 @@
                       <td><%=newListItems[i].carNo%></td>
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
+                      <form class="item" action="/select" method="post">
+                      <td><button type="submit" name="Select" value="<%=newListItems[i]._id%>">Select</button></td>
+                    </form>
                     </tr>
                
                  
