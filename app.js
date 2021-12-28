@@ -59,9 +59,6 @@ const Userc=new mongoose.model("Userc",usercSchema);
 const Vehicle=new mongoose.model("Vehicle",vehicleSchema);
 const AvailVehicle=new mongoose.model("AvailVehicle",vehicleSchema);
 const UserDetail=new mongoose.model("UserDetail",userDetailSchema);
-
-const Vehicle=mongoose.model("Vehicle",vehicleSchema);
-const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
 const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 
 
@@ -131,6 +128,9 @@ app.post("/login",function(req,res){
        }
    })
 
+});
+app.get("/root",function(req,res){
+    res.render("root");
 });
 app.get("/home",function(req,res){
 
