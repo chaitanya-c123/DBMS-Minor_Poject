@@ -104,8 +104,8 @@ app.get("/homepage",function(req,res){
 
 
 const newUser=new User({
-    email:"defg",
-    password:md5("defg")
+    email:"vasbhach@gmail.com",
+    password:md5("303560")
 });
 newUser.save(function(err){
     if(err){
@@ -135,7 +135,7 @@ app.post("/login",function(req,res){
 app.get("/home",function(req,res){
 
  Vehicle.find({},function(err,vehicleList){
-        if(vehicleList.length>0)
+        if(vehicleList.length>=0)
         {
             res.render("home",{newListItems:vehicleList});
         }
@@ -207,7 +207,16 @@ app.post("/add",function(req,res){
         carTrans:vehDetails.carTrans,
         carRate:vehDetails.carRate
     });
+    // const available=new AvailVehicle({
+    //     modelName:vehDetails.modelName,
+    //     carYear:vehDetails.carYear,
+    //     carNo:vehDetails.carNo,
+    //     carTrans:vehDetails.carTrans,
+    //     carRate:vehDetails.carRate
+
+    // });
     vehicle.save();
+   // available.save();
     res.redirect("/home");
 });
 app.post("/delete",function(req,res){
@@ -303,6 +312,7 @@ var username;
 
     });
 });
+
 const userDetails1=[];
 app.get("/users",function(req,res){
     UserDetail.find({},function(err,userDetails1){
@@ -317,8 +327,36 @@ app.get("/users",function(req,res){
     res.render("users",{newListItems:userDetails1});
 });
 
+var nodemailer=require('nodemailer');
+var transport=nodemailer.createTransport(
+    {
+        service:'gmail',
+        auth:{
+            user:'vasbhach@gmail.com',
+            pass:'303560db'
 
+
+
+        }
+    }
+)
+
+var mailOptions={
+    from:'vasbhach@gmail.com',
+    to:'vasukisravanth26@gmail.com,bhavana6jd@gmail.com,chaitanyamc001@gmail.com',
+    subject:'VBC RENTALS',
+    text:'Thank you for using VBC rentals. You booked a vehicle .'
+}
+transport.sendMail(mailOptions,function(err,info){
+    if(err){
+        console.log(err);
+    }
+    else{
+        console.log("Email sent"+info.response);
+    }
+})
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
 });
+
