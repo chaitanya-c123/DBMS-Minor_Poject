@@ -83,14 +83,6 @@ initializePassport(passport,
     id=>userscs.find(user=>user.id === id)
 )
 
-// const defVehicle=new Vehicle({
-//     modelName:"Swift",
-//     carYear:"2019",
-//     carNo:"KA-21-2345",
-//     carTrans:"Petrol",
-//     carRate:"17"
-// });
-// defVehicle.save();
 
 app.get("/",function(req,res){
     res.render("homepage");
@@ -289,47 +281,7 @@ res.redirect("/customer");
 
 })
 
-// app.post("/registerc",function(req,res){
 
-//     const newUser=new Userc({
-//     email:req.body.cusername,
-//     password:md5(req.body.cpassword),
-//     name:req.body.cname,
-//     address:req.body.caddress,
-//     phonenumber:req.body.cpno
-//     });
-//     newUser.save();
-//     // newUser.save(function(err){
-//     //   if(err){
-//     //     console.log(err);
-//     //   }/*else{
-//     //     res.redirect("/home");
-//     //   }*/
-//     // });
-//     // res.redirect("/home");
-//     res.redirect("/customer");
-//   });
-
-//   app.post("/loginc",function(req,res){
-//     const username=req.body.username;
-//     const password=md5(req.body.password);
-
-//     Userc.findOne({email:username},function(err,foundUser){
-//         if(err){
-//             console.log(err);
-//         }
-//           else{if(foundUser){
-//               if(foundUser.password===password){
-//                 res.redirect("/customer");
-//               }
-//           }
-
-//         }
-
-
-
-//     });
-// });
 app.post("/registerc",checkNotAuthenticated,async(req,res)=>{
     try{
       const hashedPassword=await bcrypt.hash(req.body.password, 10)
