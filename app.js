@@ -72,13 +72,23 @@ const availVehicleSchema={
     carTrans:String,
     carRate:Number
 };
+const userDetailSchema=new mongoose.Schema({
+    userEmail:String,
+    userName:String,
+    userAdress:String,
+    userPhonenumber:String,
+    modelName:String,
+    carNumber:String
+});
 let vehicleList=[];
 let availVehicleList=[];
 let bookedVehicleList=[];
 const User=new mongoose.model("User",userSchema);
 const Userc=new mongoose.model("Userc",usercSchema);
-const Vehicle=mongoose.model("Vehicle",vehicleSchema);
-const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
+
+const Vehicle=new mongoose.model("Vehicle",vehicleSchema);
+const AvailVehicle=new mongoose.model("AvailVehicle",vehicleSchema);
+const UserDetail=new mongoose.model("UserDetail",userDetailSchema);
 const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 
 
@@ -88,6 +98,13 @@ const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 app.get("/",function(req,res){
     res.render("homepage");
 });
+
+//const Usercu = require('./models/user');
+// passport.use(Userc.createStrategy());
+// passport.serializeUser(Userc.serializeUser());
+// passport.deserializeUser(Userc.deserializeUser());
+
+ 
 
 app.get("/loginhome",function(req,res){
     res.render("loginhome");
@@ -106,11 +123,12 @@ app.get("/registerc",function(req,res){
     res.render("registerc");
 });
 
+
 app.get("/loginc",function(req,res){
 
+
     res.render("loginc");
-    
-    });
+  });
 
 const newUser=new User({
     email:"vasbhach@gmail.com",
@@ -141,6 +159,9 @@ app.post("/login",function(req,res){
    })
 
 });
+app.get("/root",function(req,res){
+    res.render("root");
+});
 app.get("/home",function(req,res){
 
  Vehicle.find({},function(err,vehicleList){
@@ -160,6 +181,7 @@ app.get("/home",function(req,res){
 })
 app.get("/customer",isAuth,function(req,res){
 
+
         AvailVehicle.find({},function(err,availVehicleList){
             if(availVehicleList.length>=0)
             {
@@ -173,9 +195,9 @@ app.get("/customer",isAuth,function(req,res){
                 console.log("Successfully customer list shown");
             }
         });
-   
 
 });
+
 app.get("/booked",function(req,res){
   BookedVehicle.find({},function(err,bookedVehicleList){
       if(bookedVehicleList.length>0)
@@ -239,24 +261,29 @@ app.post("/delete",function(req,res){
 });
 app.post("/addTo",function(req,res){
     const vehicleId=req.body.addTo;
+    
     Vehicle.findById(vehicleId,function(err,avl){
         if(!err){
-        const availvehicle=new AvailVehicle({
-            modelName:avl.modelName,
-            carYear:avl.carYear,
-            carNo:avl.carNo,
-            carTrans:avl.carTrans,
-            carRate:avl.carRate
-        });
-        availvehicle.save();
-    }
-    else{
-        console.log(err);
-    }
-
-    })
+            AvailVehicle.exists({name:avl.modelName},function(err,doc){
+             if(!err){
+                if(!doc)
+                {
+                    const availvehicle=new AvailVehicle({
+                        modelName:avl.modelName,
+                        carYear:avl.carYear,
+                        carNo:avl.carNo,
+                        carTrans:avl.carTrans,
+                        carRate:avl.carRate 
+                    });
+                availvehicle.save();
+                }
+            }
+            });
+        }
+      });
     res.redirect("/home");
 });
+
 app.post("/click",function(req,res){
 const vehicleId=req.body.click;
 AvailVehicle.findById(vehicleId,function(err,book){
@@ -281,6 +308,9 @@ res.redirect("/customer");
 
 
 })
+
+
+
 
 
 
@@ -319,6 +349,26 @@ app.post("/registerc",function(req,res){
 
     });
 });
+
+
+
+
+const userDetails1=[];
+app.get("/users",function(req,res){
+    UserDetail.find({},function(err,userDetails1){
+          if(userDetails1.length>0)
+          {
+              res.render("users",{newListItems:userDetails1});
+          }
+          if(err){
+              console.log(err);
+          }
+    })
+    res.render("users",{newListItems:userDetails1});
+});
+
+});
+
 var nodemailer=require('nodemailer');
 var transport=nodemailer.createTransport(
     {
@@ -326,6 +376,7 @@ var transport=nodemailer.createTransport(
         auth:{
             user:'vasbhach@gmail.com',
             pass:'303560db'
+
 
 
         }
