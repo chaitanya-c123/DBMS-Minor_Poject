@@ -12,16 +12,17 @@ var items=["Buy food","Cook food","Eat food"];
 var vehicles=[];
 var workItems=[];
 const session=require('express-session');
-const passport=require('passport');
-const passsportLocalMongoose=require('passport-local-mongoose');
-const bcrypt=require('bcrypt');
-const userscs=[];
-const flash=require('express-flash')
+//const passport=require('passport');
+//const passsportLocalMongoose=require('passport-local-mongoose');
+//const bcrypt=require('bcrypt');
+//const userscs=[];
+//const flash=require('express-flash');
+//const usermodel=require("./models/user");
 
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
-app.use(flash())
+//app.use(flash())
 app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
@@ -29,27 +30,33 @@ app.use(session({
 
 }));
 
- app.use(passport.initialize());
- app.use(passport.session());
+ //app.use(passport.initialize());
+// app.use(passport.session());
 console.log(process.env.API_KEY);
 mongoose.connect("mongodb://localhost:27017/rentalDB",{useNewUrlParser:true});
 
-
+const isAuth=(req,res,next)=>{
+    if(req.session.isAuth){
+        next()
+    }else{
+        res.redirect("/loginc");
+    }
+}
 
 const userSchema=new mongoose.Schema({
     email:String,
     password:String
 });
-
 const usercSchema= new mongoose.Schema({
-    username:String,
+    email:String,
     password:String,
     name:String,
     //address:String,
    // phonenumber:String
 
 });
-usercSchema.plugin(passsportLocalMongoose);
+
+//usercSchema.plugin(passsportLocalMongoose);
 
 const vehicleSchema={
     modelName:String,
@@ -83,16 +90,22 @@ const Vehicle=new mongoose.model("Vehicle",vehicleSchema);
 const AvailVehicle=new mongoose.model("AvailVehicle",vehicleSchema);
 const UserDetail=new mongoose.model("UserDetail",userDetailSchema);
 const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
+
+
+
+
+
+app.get("/",function(req,res){
+    res.render("homepage");
+});
+
 //const Usercu = require('./models/user');
 // passport.use(Userc.createStrategy());
 // passport.serializeUser(Userc.serializeUser());
 // passport.deserializeUser(Userc.deserializeUser());
-const initializePassport=require('./passport-config');
-initializePassport(passport,
-    email=>userscs.find(user=>user.email === email),
-    id=>userscs.find(user=>user.id === id)
-)
+
  
+
 app.get("/loginhome",function(req,res){
     res.render("loginhome");
 });
@@ -106,11 +119,14 @@ app.get("/login",function(req,res){
   res.render("login");
 });
 
-app.get("/registerc",checkNotAuthenticated,function(req,res){
+app.get("/registerc",function(req,res){
     res.render("registerc");
 });
 
-app.get("/loginc",checkNotAuthenticated,function(req,res){
+
+app.get("/loginc",function(req,res){
+
+
     res.render("loginc");
   });
 
@@ -162,9 +178,9 @@ app.get("/home",function(req,res){
         }
     });
 
+})
+app.get("/customer",isAuth,function(req,res){
 
-});
-app.get("/customer",checkAuthenticated,function(req,res){
 
         AvailVehicle.find({},function(err,availVehicleList){
             if(availVehicleList.length>=0)
@@ -296,24 +312,44 @@ res.redirect("/customer");
 
 
 
-app.post("/registerc",checkNotAuthenticated,async(req,res)=>{
-    try{
-      const hashedPassword=await bcrypt.hash(req.body.password, 10)
-      userscs.push({
-           id:Date.now().toString(),
-           name:req.body.name,
-           email:req.body.email,
-           password:hashedPassword
-
-      })
-      res.redirect('/loginc');
-    }catch{
-      res.redirect('/registerc');
-
-    }
 
 
-console.log(userscs);
+app.post("/registerc",function(req,res){
+
+    const newUser=new Userc({
+    email:req.body.email,
+    password:md5(req.body.password),
+    name:req.body.name,
+    
+    });
+    newUser.save();
+    
+    res.redirect("/loginc");
+  });
+
+  app.post("/loginc",function(req,res){
+    const username=req.body.cemail;
+    const password=md5(req.body.cpassword);
+
+    Userc.findOne({email:username},function(err,foundUser){
+        if(err){
+            console.log(err);
+        }
+          else{if(foundUser){
+              if(foundUser.password===password){
+
+                req.session.isAuth=true;
+                res.redirect("/customer");
+              }
+          }
+
+        }
+
+
+
+    });
+});
+
 
 
 
@@ -332,12 +368,7 @@ app.get("/users",function(req,res){
 });
 
 });
-app.post('/loginc',checkNotAuthenticated,passport.authenticate('local',{
-successRedirect: '/customer',
-failureRedirect: '/loginc',
-failureFlash:true
 
-}));
 var nodemailer=require('nodemailer');
 var transport=nodemailer.createTransport(
     {
@@ -367,18 +398,6 @@ transport.sendMail(mailOptions,function(err,info){
     }
 })
 
-function checkAuthenticated(req,res,next){
-  if(req.isAuthenticated()){
-      return next()
-  }
-res.redirect('/loginc')
-}
-function checkNotAuthenticated(req,res,next){
-    if(req.isAuthenticated()){
-      return  res.redirect('/customer')
-    }
-    next();
-}
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
 });
