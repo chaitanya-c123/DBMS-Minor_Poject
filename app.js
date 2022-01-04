@@ -42,6 +42,13 @@ const isAuth=(req,res,next)=>{
         res.redirect("/loginc");
     }
 }
+const isAutha=(req,res,next)=>{
+    if(req.session.isAuth){
+        next()
+    }else{
+        res.redirect("/login");
+    }
+}
 
 const userSchema=new mongoose.Schema({
     email:String,
@@ -141,7 +148,7 @@ app.post("/login",function(req,res){
    })
 
 });
-app.get("/home",function(req,res){
+app.get("/home",isAutha,function(req,res){
 
  Vehicle.find({},function(err,vehicleList){
         if(vehicleList.length>=0)
@@ -346,7 +353,18 @@ transport.sendMail(mailOptions,function(err,info){
         console.log("Email sent"+info.response);
     }
 })
-
+app.post("/logout",(req,res) =>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/loginc");
+    })
+})
+app.post("/logouta",(req,res) =>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/login");
+    })
+})
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
 });
