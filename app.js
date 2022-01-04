@@ -8,7 +8,6 @@ const ejs=require('ejs');
 const mongoose=require("mongoose");
 const app=express();
 const md5=require('md5');
-var items=["Buy food","Cook food","Eat food"];
 var vehicles=[];
 var workItems=[];
 const session=require('express-session');
