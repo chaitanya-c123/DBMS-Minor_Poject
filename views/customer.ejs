@@ -33,8 +33,8 @@
                       <td><%=newListItems[i].carNo%></td>
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
-                      <td> <form action="/click" method="post">
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>" onclick="this.disabled='disabled';">click</button>
+                      <td> <form action="/click" method="post"></form>
+                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
                        </form></td>
                     </tr>
                
@@ -42,10 +42,11 @@
         </div>
    <%} %>
   </table>
-  <form action="/logout" method="post">
-    <button type="submit" name="signout" class="signout">Sign Out</button>
+  <a class="btn btn-block" href="/logout" role="button">Log Out</a>
+  <!-- <form action="/logout" method="post">
+    <button type="submit" name="signout"  class="signout">Sign Out</button>
 
-  </form>
+  </form> -->
              
     </div>
     
