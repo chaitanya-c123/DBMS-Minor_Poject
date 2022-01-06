@@ -23,6 +23,7 @@
             <th scope="col">Price</th>
           </tr>
         </thead>
+        <p id="username"><%=user%></p>
         <% for(var i=0;i<newListItems.length;i++){ %>
           <div class="item">
                   <tbody>
@@ -34,7 +35,9 @@
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
                       <td> <form action="/click" method="post">
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>" onclick="this.disabled='disabled';">click</button>
+
+                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
+
                        </form></td>
 
                     </tr>
@@ -45,6 +48,6 @@
   </table>
     <button type="submit" name="signout" class="signout">Sign Out</button>         
     </div>
-    
+    <script src="app.js"></script>
     </body>
 </html>

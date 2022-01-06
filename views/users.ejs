@@ -9,7 +9,11 @@
     </head>
     <body>
       <div class="box" id="heading">
+<<<<<<< Updated upstream
         <h1>Vehicle List</h1>
+=======
+        <h1>User details</h1>
+>>>>>>> Stashed changes
       </div>
      
          <div class="box">
@@ -32,6 +36,7 @@
                         <th scope="row"><%=i+1%></th>
                         <td><%=newListItems[i].userEmail%></td>
                         <td><%=newListItems[i].userName%></td>
+<<<<<<< Updated upstream
                         <td><%=newListItems[i].userAdress%></td>
                         <td><%=newListItems[i].userPhonenumber%></td>
                         <td><%=newListItems[i].modelName%></td>
@@ -43,17 +48,36 @@
                          <form action="/addTo" method="post">
                            <button type="submit" name="addTo" id="addButton" value="<%=newListItems[i]._id%>">Add to list</button>
                           </form></td>
+=======
+                        <td><%=newListItems[i].userAddress%></td>
+                        <td><%=newListItems[i].userPhonenumber%></td>
+                        <td><%=newListItems[i].modelName%></td>
+                        <td><%=newListItems[i].carNumber%></td>
+                        <td><div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Update Status
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a class="dropdown-item" href="#">Accept</a>
+                              <a class="dropdown-item" href="#">Pending</a>
+                              <a class="dropdown-item" href="#">Deny</a>
+                            </div>
+                          </div></td>
+>>>>>>> Stashed changes
                       </tr>
                  
                    
           </div>
      <%} %>
     </table>
+<<<<<<< Updated upstream
     </div>
          <form class="item" action="/home" method="post">
             <button type="submit" name="list" value=""><a href="/add">Add</a></button>
           </form>
     </div>
     
+=======
+>>>>>>> Stashed changes
     </body>
 </html>
