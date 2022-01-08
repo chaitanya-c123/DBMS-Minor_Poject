@@ -69,6 +69,8 @@
                           <td><form action="/statusDeny" method="post"><button name="deny" value="<%=newListItems[i]._id%>">Denied</button></form></td>
                         <%}%>
 
+                        <td><form action="/addBack" method="post"><button name="number" value="<%=newListItems[i].carNumber%>">Add back</button></form></td>
+
                       </tr>
                   </div>
      <%} %>

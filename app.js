@@ -66,13 +66,6 @@ const vehicleSchema={
     carRate:Number
 };
 
-const availVehicleSchema={
-    modelName:String,
-    carYear:String,
-    carNo:String,
-    carTrans:String,
-    carRate:Number
-};
 const userDetailSchema=new mongoose.Schema({
     userEmail:String,
     userName:String,
@@ -104,6 +97,7 @@ const querySchema=new mongoose.Schema({
 let vehicleList=[];
 let availVehicleList=[];
 let bookedVehicleList=[];
+let newListItems=[];
 const User=new mongoose.model("User",userSchema);
 const Userc=new mongoose.model("Userc",usercSchema);
 const Vehicle=mongoose.model("Vehicle",vehicleSchema);
@@ -266,7 +260,7 @@ app.get("/home",function(req,res){
     });
 
 })
-let defcontent="Select your car";
+
 app.get("/customer",function(req,res){
     
     if(req.isAuthenticated())
@@ -291,6 +285,7 @@ app.get("/customer",function(req,res){
             else{
                 console.log("Successfully customer list shown");
             }
+  
         });
         });
     }
@@ -322,29 +317,25 @@ app.get("/add",function(req,res){
     res.render("add");
 });
 app.post("/add",function(req,res){
-    const vehDetails={
+    const vehicle=new Vehicle({
         modelName:req.body.modelName,
         carYear:req.body.carYear,
         carNo:req.body.carNo,
         carTrans:req.body.carTrans,
         carRate:req.body.carRate
 
-    };
-    const vehicle=new Vehicle({
-        modelName:vehDetails.modelName,
-        carYear:vehDetails.carYear,
-        carNo:vehDetails.carNo,
-        carTrans:vehDetails.carTrans,
-        carRate:vehDetails.carRate
     });
-   
     vehicle.save();
-   // available.save();
     res.redirect("/home");
 });
 
-
-
+    const newUser=new User({
+    email:req.body.email,
+    password:md5(req.body.password),
+    });
+    newUser.save();
+    res.redirect("/home");
+  });
     
     app.post("/login",function(req,res){
         const username=req.body.email;
@@ -544,7 +535,7 @@ Userc.findOne({username:email},function(err,user){
             userAddress:user.address,
             userPhonenumber:user.phoneNumber,
             modelName:book.modelName,
-            carNumber:book.carYear,
+            carNumber:book.carNo,
             status:"Pending",
             arrivalDate:arrDate,
             returnDate:retDate,
@@ -763,6 +754,39 @@ app.post("/statusDeny",function(req,res){
      res.redirect("/users");
  
  });
+ app.post("/addBack",function(req,res){
+
+    let vehiclenum=req.body.number;
+    Vehicle.find({carNo:vehiclenum},function(err,avl){
+        if(!err){
+            AvailVehicle.exists({carNo:vehiclenum},function(err,doc){
+             if(!err){
+                if(!doc)
+                {
+                    const availvehicle=new AvailVehicle({
+                        modelName:avl.modelName,
+                        carYear:avl.carYear,
+                        carNo:avl.carNo,
+                        carTrans:avl.carTrans,
+                        carRate:avl.carRate 
+                    });
+                availvehicle.save();
+                }
+            }
+            });
+        }
+        });
+            BookedVehicle.deleteOne({carNo:vehiclenum},function(err){
+                if(!err){
+                    console.log("Deleted from booked vehicles");
+                }
+                else{
+                    console.log(err);
+                }
+            });
+    res.redirect("/users");
+    
+ })
 app.get("/logout",function(req,res){
     console.log(req.user.email);
     req.logout();
