@@ -13,12 +13,14 @@ const passport=require('passport');
 const passsportLocalMongoose=require('passport-local-mongoose');
 const bcrypt=require('bcrypt');
 const userscs=[];
-const flash=require('express-flash');
+const flash=require('connect-flash');
+
 //const usermodel=require("./models/user");
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
+
 //app.use(flash())
 app.use(session({
     secret:process.env.SESSION_SECRET,
@@ -26,19 +28,15 @@ app.use(session({
     saveUninitialized:false
 
 }));
+app.use(flash());
 
  app.use(passport.initialize());
 app.use(passport.session());
 console.log(process.env.API_KEY);
 mongoose.connect("mongodb://localhost:27017/rentalDB",{useNewUrlParser:true});
 
-const isAuth=(req,res,next)=>{
-    if(req.session.isAuth){
-        next()
-    }else{
-        res.redirect("/loginc");
-    }
-}
+
+   
 
 const userSchema=new mongoose.Schema({
     username:String,
@@ -48,14 +46,13 @@ const usercSchema= new mongoose.Schema({
     username:String,
     password:String,
     name:String,
-
     address:String,
    phoneNumber:String
-
 
 });
 
 usercSchema.plugin(passsportLocalMongoose);
+
 
 const vehicleSchema={
     modelName:String,
@@ -109,18 +106,40 @@ passport.use(Userc.createStrategy());
 passport.serializeUser(Userc.serializeUser());
 passport.deserializeUser(Userc.deserializeUser());
 
-
 app.get("/",function(req,res){
     res.render("homepage");
 });
 
 //const Usercu = require('./models/user');
-// passport.use(Userc.createStrategy());
-// passport.serializeUser(Userc.serializeUser());
-// passport.deserializeUser(Userc.deserializeUser());
+passport.use(Userc.createStrategy());
+passport.serializeUser(Userc.serializeUser());
+passport.deserializeUser(Userc.deserializeUser());
+/*passport.use(new LocalStrategy(
+    (username,password,authCheckDone)=>{
+        app.locals.usercs.findOne({username})
+        .then(userc=>{
+            if(!userc){
+                return authCheckDone(null,false);
+            }
+            if(userc.password !==password){
+                return authCheckDone(null,false);
+            }
+        return authCheckDone(null,userc);
+        });
+        
+    }
+));
+passport.serializeUser(function (userc, done) {
+    done(null, userc._id);
+  });
+  
+  passport.deserializeUser(function (id, done) {
+    Userc.findById(id, function (err, userc) {
+      done(err, userc);
+    });
+  });
 
- 
-
+*/
 app.get("/loginhome",function(req,res){
     res.render("loginhome");
 });
@@ -588,7 +607,24 @@ app.get("/logout",function(req,res){
 });
 
 
+const userDetails1=[];
+app.get("/users",function(req,res){
+    UserDetail.find({},function(err,userDetails1){
+          if(userDetails1.length>0)
+          {
+              res.render("users",{newListItems:userDetails1});
+          }
+          if(err){
+              console.log(err);
+          }
+    })
+    res.render("users",{newListItems:userDetails1});
+});
+
+
+
 var nodemailer=require('nodemailer');
+const { Router } = require('express');
 var transport=nodemailer.createTransport(
     {
         service:'gmail',
@@ -615,6 +651,22 @@ transport.sendMail(mailOptions,function(err,info){
     else{
         console.log("Email sent"+info.response);
     }
+
+
+})
+app.post("/logout",(req,res)=>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/loginc");
+        currentUser.pop();
+    })
+});
+app.post("/logouta",(req,res)=>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/login");
+    })
+
 });
 
 app.listen(3000,function(){
