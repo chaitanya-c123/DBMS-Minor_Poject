@@ -44,6 +44,10 @@
                        
                         <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
 
+
+                      <td> <form action="/clicks" method="post">
+                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
+
                        </form></td>
 
                     </tr>
@@ -62,7 +66,9 @@
 </div>
 <button type="submit" class="btn btn-primary" name="review" value="<%=user%>">Publish</button>
 </form>
-    <button type="submit" name="signout"  class="signout">Sign Out</button>         
+  <form action="/logout" method="POST">
+    <button type="submit" name="signout" class="signout">Sign Out</button> 
+  </form>        
     </div>
     <script src="app.js"></script>
     </body>
