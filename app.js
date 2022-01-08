@@ -79,14 +79,21 @@ const userDetailSchema=new mongoose.Schema({
     userPhonenumber:String,
     modelName:String,
     carNumber:String,
+    arrivalDate:String,
+    returnDate:String,
     status:String,
-    accept:String,
-    deny:String
+    totPrice:Number
 });
 const reviewSchema=new mongoose.Schema({
     username:String,
     content:String
 });
+const querySchema=new mongoose.Schema({
+    username:String,
+    queryContent:String,
+    reply:String
+});
+
 let vehicleList=[];
 let availVehicleList=[];
 let bookedVehicleList=[];
@@ -97,6 +104,7 @@ const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
 const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 const UserDetail=mongoose.model("UserDetail",userDetailSchema);
 const Review=mongoose.model("Review",reviewSchema);
+const Query=mongoose.model("Query",querySchema);
 passport.use(Userc.createStrategy());
 passport.serializeUser(Userc.serializeUser());
 passport.deserializeUser(Userc.deserializeUser());
@@ -171,7 +179,19 @@ app.post("/login",function(req,res){
 
 });
 app.get("/root",function(req,res){
-    res.render("root");
+    Review.find({},function(err,reviewList){
+        if(reviewList.length>=0)
+        {
+            res.render("root",{reviews:reviewList});
+        }
+        if(err)
+        {
+            console.log(err);
+        }
+        else{
+            console.log("Successfully root list shown");
+        }
+    });
 });
 app.get("/home",function(req,res){
 
@@ -199,9 +219,10 @@ app.get("/customer",function(req,res){
         currentUser=req.user.username;
         console.log(currentUser);
         AvailVehicle.find({},function(err,availVehicleList){
+            UserDetail.find({userEmail:currentUser},function(err,previousBook){
             if(availVehicleList.length>=0)
             {
-                res.render("customer",{newListItems:availVehicleList,user:currentUser,content:defcontent});
+                res.render("customer",{newListItems:availVehicleList,user:currentUser,previousBookings:previousBook});
             }
             if(err)
             {
@@ -210,6 +231,7 @@ app.get("/customer",function(req,res){
             else{
                 console.log("Successfully customer list shown");
             }
+        });
         });
     }
     else{
@@ -345,17 +367,18 @@ app.post("/addTo",function(req,res){
 
 app.post("/click",function(req,res){
     console.log("click");
-const vehicleId=req.body.click;
-const email=req.body.user;
-let userdetail;
+var vehicleId=req.body.click;
+var email=req.body.user;
+var arrDate=req.body.arrdate;
+var retDate=req.body.retdate;
+
 
 Userc.findOne({username:email},function(err,user){
     console.log(user);
     if(!err){
-        userdetail=user.name;
     AvailVehicle.findById(vehicleId,function(err,book){
         if(!err){
-        const bookvehicle=new BookedVehicle({
+        let bookvehicle=new BookedVehicle({
             modelName:book.modelName,
             carYear:book.carYear,
             carNo:book.carNo,
@@ -363,7 +386,23 @@ Userc.findOne({username:email},function(err,user){
             carRate:book.carRate
     
         });
-      //  defcontent="Hello"+userdetail.name+". Thank you for using VBC RENTALS, your booking details will be sent via mail"+"Selected car details"+ "\nmodel Name"+book.modelName+"\ncar Year"+book.carYear+"\ncarNo"+book.carNo+"\ncarTrans"+book.carTrans+"\ncarRate"+book.carRate;
+       var price;
+       var no_of_days;
+       var aryear=Number(arrDate.substring(6,10));
+       var retyear=Number(retDate.substring(6,10));
+       var retmon=Number(retDate.substring(3,5));
+       var arrmon=Number(arrDate.substring(3,5));
+       var arrdat=Number(arrDate.substring(0,2));
+       var retdat=Number(retDate.substring(0,2));
+       if((retyear-aryear)>0){
+           retmon+=(retyear-aryear)*12;
+        }
+        if((retmon-arrmon)>0){
+             retdat+=(retmon-arrmon)*30;
+        }
+        no_of_days=retdat-arrdat;
+        price=book.carRate*no_of_days;
+
         let newUser=new UserDetail({
             userEmail:user.username,
             userName:user.name,
@@ -372,13 +411,15 @@ Userc.findOne({username:email},function(err,user){
             modelName:book.modelName,
             carNumber:book.carYear,
             status:"Pending",
-            accept:"Accept",
-            deny:"Deny"
-
+            arrivalDate:arrDate,
+            returnDate:retDate,
+            totPrice:price
         });
+        
         bookvehicle.save();
         newUser.save();
-    
+      
+          
         }
         else{
             console.log(err);
@@ -392,11 +433,10 @@ Userc.findOne({username:email},function(err,user){
         else{
             console.log(err);
         }
-    })
+    });
+    
 }
 });
-
-
 });
 
 
@@ -465,13 +505,52 @@ app.post("/review",function(req,res){
     newReview.save();
     res.redirect("/customer");
 });
+app.post("/query",function(req,res){
+    const newquery=new Query({
+        username:req.body.query,
+        queryContent:req.body.queryBody,
+        reply:""
+    });
+    newquery.save();
+    res.redirect("/customer");
+});
+app.get("/queryPage",function(req,res){
+    Query.find({},function(err,queryList){
+        if(queryList.length>=0)
+        {
+            res.render("queryPage",{queries:queryList});
+        }
+        if(err)
+        {
+            console.log(err);
+        }
+        else{
+            console.log("Successfully query list shown");
+        }
+    });
+});
+app.post("/queryReply",function(req,res){
+    var queryId=req.body.queryId;
+    var qcontent=req.body.queryBody;
+    const update={
+        reply:req.body.queryBody
+    };
+     Query.findOneAndUpdate({_id:queryId},update,function(err,queryInfo){
+         if(!err){
+         console.log(queryInfo);     
+         }
+         else{
+             console.log("err");
+         }
+     });
+   res.redirect("/queryPage");
+
+});
 app.post("/statusAccept",function(req,res){
    const userId=req.body.accept;
    console.log(userId);
    const update={
-       status:"Accepted",
-       accept:"Accepted",
-       deny:""
+       status:"Accepted"
    };
     UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
         if(!err){
@@ -488,9 +567,7 @@ app.post("/statusDeny",function(req,res){
     const userId=req.body.deny;
     console.log(userId);
     const update={
-        status:"Denied",
-        accept:"",
-        deny:"Denied"
+        status:"Denied"
     };
      UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
          if(!err){
