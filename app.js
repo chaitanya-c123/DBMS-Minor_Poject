@@ -14,8 +14,12 @@ const passsportLocalMongoose=require('passport-local-mongoose');
 const bcrypt=require('bcrypt');
 const userscs=[];
 const flash=require('connect-flash');
+var nodemailer=require('nodemailer');
+
+
 
 //const usermodel=require("./models/user");
+
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
@@ -76,6 +80,10 @@ const userDetailSchema=new mongoose.Schema({
     userPhonenumber:String,
     modelName:String,
     carNumber:String,
+
+    status:String,
+    accept:String,
+    deny:String,
     arrivalDate:String,
     returnDate:String,
     status:String,
@@ -85,11 +93,13 @@ const reviewSchema=new mongoose.Schema({
     username:String,
     content:String
 });
+
 const querySchema=new mongoose.Schema({
     username:String,
     queryContent:String,
     reply:String
 });
+
 
 let vehicleList=[];
 let availVehicleList=[];
@@ -101,6 +111,8 @@ const AvailVehicle=mongoose.model("AvailVehicle",vehicleSchema);
 const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 const UserDetail=mongoose.model("UserDetail",userDetailSchema);
 const Review=mongoose.model("Review",reviewSchema);
+
+
 const Query=mongoose.model("Query",querySchema);
 passport.use(Userc.createStrategy());
 passport.serializeUser(Userc.serializeUser());
@@ -110,10 +122,22 @@ app.get("/",function(req,res){
     res.render("homepage");
 });
 
-//const Usercu = require('./models/user');
+
+
 passport.use(Userc.createStrategy());
 passport.serializeUser(Userc.serializeUser());
 passport.deserializeUser(Userc.deserializeUser());
+
+const isAutha=(req,res,next)=>{
+    if(req.session.isAuth){
+        next()
+    }else{
+        res.redirect("/login");
+    }
+}
+
+//const Usercu = require('./models/user');
+
 /*passport.use(new LocalStrategy(
     (username,password,authCheckDone)=>{
         app.locals.usercs.findOne({username})
@@ -149,9 +173,15 @@ app.get("/homec",function(req,res){
     res.render("homec");
 });
 
+
+// app.get("/register",function(req,res){
+//     res.render("register");
+//   });
+
 app.get("/register",function(req,res){
     res.render("register");
   });
+
 app.get("/login",function(req,res){
   res.render("login");
 });
@@ -168,7 +198,7 @@ app.get("/loginc",function(req,res){
   });
 
 const newUser=new User({
-    email:"vasbhach@gmail.com",
+    username:"vasbhach@gmail.com",
     password:md5("303560")
 });
 newUser.save(function(err){
@@ -179,6 +209,7 @@ newUser.save(function(err){
         console.log('Success');
     }
 });
+
 
 app.post("/login",function(req,res){
     const username=req.body.username;
@@ -198,6 +229,11 @@ app.post("/login",function(req,res){
 
 });
 app.get("/root",function(req,res){
+
+    res.render("root");
+});
+app.get("/home",isAutha,function(req,res){
+
     Review.find({},function(err,reviewList){
         if(reviewList.length>=0)
         {
@@ -213,6 +249,7 @@ app.get("/root",function(req,res){
     });
 });
 app.get("/home",function(req,res){
+
 
  Vehicle.find({},function(err,vehicleList){
         if(vehicleList.length>=0)
@@ -241,7 +278,11 @@ app.get("/customer",function(req,res){
             UserDetail.find({userEmail:currentUser},function(err,previousBook){
             if(availVehicleList.length>=0)
             {
+
+                res.render("customer",{newListItems:availVehicleList,user:currentUser,content:defcontent});
+
                 res.render("customer",{newListItems:availVehicleList,user:currentUser,previousBookings:previousBook});
+
             }
             if(err)
             {
@@ -296,38 +337,13 @@ app.post("/add",function(req,res){
         carTrans:vehDetails.carTrans,
         carRate:vehDetails.carRate
     });
-    // const available=new AvailVehicle({
-    //     modelName:vehDetails.modelName,
-    //     carYear:vehDetails.carYear,
-    //     carNo:vehDetails.carNo,
-    //     carTrans:vehDetails.carTrans,
-    //     carRate:vehDetails.carRate
-
-    // });
+   
     vehicle.save();
    // available.save();
     res.redirect("/home");
 });
-app.post("/register",function(req,res){
 
-    const newUser=new User({
-    email:req.body.email,
-    password:md5(req.body.password),
-   // name:req.body.cname,
-   // address:req.body.caddress,
-   // phonenumber:req.body.cpno
-    });
-    newUser.save();
-    // newUser.save(function(err){
-    //   if(err){
-    //     console.log(err);
-    //   }/*else{
-    //     res.redirect("/home");
-    //   }*/
-    // });
-    // res.redirect("/home");
-    res.redirect("/home");
-  });
+
 
     
     app.post("/login",function(req,res){
@@ -347,6 +363,7 @@ app.post("/register",function(req,res){
        })
         
     });
+
 app.post("/delete",function(req,res){
     const vehicleId=req.body.deleted;
     Vehicle.findByIdAndRemove(vehicleId,function(err){
@@ -385,6 +402,105 @@ app.post("/addTo",function(req,res){
 });
 
 app.post("/click",function(req,res){
+
+ 
+    console.log("click");
+    const vehicleId=req.body.click;
+    const email=req.body.user;
+    let userdetail;
+    if(req.isAuthenticated())
+    {
+        console.log(req.user.phoneNumber);
+        const cur=req.user.username;
+
+        Userc.findOne({username:email},function(err,user){
+            console.log(user);
+            if(!err){
+                userdetail=user.name;
+            AvailVehicle.findById(vehicleId,function(err,book){
+                if(!err){
+                    var ve=book.modelName;
+                    var cn0=book.carNo;
+                const bookvehicle=new BookedVehicle({
+                    modelName:book.modelName,
+                    carYear:book.carYear,
+                    carNo:book.carNo,
+                    carTrans:book.carTrans,
+                    carRate:book.carRate
+            
+                });
+              //  defcontent="Hello"+userdetail.name+". Thank you for using VBC RENTALS, your booking details will be sent via mail"+"Selected car details"+ "\nmodel Name"+book.modelName+"\ncar Year"+book.carYear+"\ncarNo"+book.carNo+"\ncarTrans"+book.carTrans+"\ncarRate"+book.carRate;
+                let newUser=new UserDetail({
+                    userEmail:user.username,
+                    userName:user.name,
+                    userAddress:user.address,
+                    userPhonenumber:user.phoneNumber,
+                    modelName:book.modelName,
+                    carNumber:book.carYear,
+                    status:"Pending",
+                    accept:"Accept",
+                    deny:"Deny"
+        
+                });
+                bookvehicle.save();
+                newUser.save();
+                console.log(ve);
+
+
+                var transport=nodemailer.createTransport(
+                    {
+                        host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                        auth:{
+                            user:'vasbhach@gmail.com',
+                            pass:'303560db'
+                
+                
+                        }
+                    }
+                )
+                
+                var mailOptions={
+                    from:'vasbhach@gmail.com',
+                    to:cur,
+                    subject:'VBC RENTALS',
+                    text:`Thank you for chosing VBC rentals. You have selected ${ve}.Vehicle number is ${cn0} `
+                }
+                transport.sendMail(mailOptions,function(error,info){
+                    if(error){
+                        console.log(error)
+                    } else{
+                        console.log('email sent'+info.response);
+                    }
+                });
+
+
+                }
+                else{
+                    console.log(err);
+                }
+            });
+            AvailVehicle.findByIdAndRemove(vehicleId,function(err){
+                if(!err){
+                    console.log("successfully deleted");
+                    res.redirect("/customer");
+                }
+                else{
+                    console.log(err);
+                }
+            })
+        }
+        });
+
+
+    }
+    else{
+        res.redirect('/loginc');
+    }
+
+});
+
     console.log("click");
 var vehicleId=req.body.click;
 var email=req.body.user;
@@ -509,9 +625,11 @@ app.get("/users",function(req,res){
             }
             else{
                 console.log("Successfully customer list shown");
+
                 // const userInfo=os.userInfo();
                 // const uid=userInfo.name;
                 // console.log(uid);
+
             }
         });
 
@@ -524,6 +642,52 @@ app.post("/review",function(req,res){
     newReview.save();
     res.redirect("/customer");
 });
+
+app.post("/statusAccept",function(req,res){
+   const userId=req.body.accept;
+   console.log(userId);
+   const update={
+       status:"Accepted",
+       accept:"Accepted",
+       deny:""
+   };
+    UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
+        if(!err){
+        console.log(userInfo);     
+        }
+        else{
+            console.log("err");
+        }
+    });
+    res.redirect("/users");
+
+});
+app.post("/statusDeny",function(req,res){
+    const userId=req.body.deny;
+    console.log(userId);
+    const update={
+        status:"Denied",
+        accept:"",
+        deny:"Denied"
+    };
+     UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
+         if(!err){
+         console.log(userInfo);     
+         }
+         else{
+             console.log("err");
+         }
+     });
+     res.redirect("/users");
+ 
+ });
+app.get("/logout",function(req,res){
+    console.log(req.user.email);
+    req.logout();
+    
+    res.redirect("/loginc");
+});
+
 app.post("/query",function(req,res){
     const newquery=new Query({
         username:req.body.query,
@@ -623,37 +787,25 @@ app.get("/users",function(req,res){
 
 
 
-var nodemailer=require('nodemailer');
-const { Router } = require('express');
-var transport=nodemailer.createTransport(
-    {
-        service:'gmail',
-        auth:{
-            user:'vasbhach@gmail.com',
-            pass:'303560db'
+
+
+app.post("/logout",function(req,res){
+    // console.log(req.user.email);
+     req.logout();
+     
+     res.redirect("/loginc");
+ })
+
+app.post("/logouta",(req,res) =>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/login");
+    })
 
 
 
-        }
-    }
-)
-
-var mailOptions={
-    from:'vasbhach@gmail.com',
-    to:'vasukisravanth26@gmail.com',
-    subject:'VBC RENTALS',
-    text:'Thank you for using VBC rentals. You booked a vehicle .'
-}
-transport.sendMail(mailOptions,function(err,info){
-    if(err){
-        console.log(err);
-    }
-    else{
-        console.log("Email sent"+info.response);
-    }
 
 
-})
 app.post("/logout",(req,res)=>{
     req.session.destroy((err)=>{
         if(err) throw err;
@@ -667,7 +819,9 @@ app.post("/logouta",(req,res)=>{
         res.redirect("/login");
     })
 
+
 });
+
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
