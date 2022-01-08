@@ -8,9 +8,15 @@
      <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-      <div class="box" id="heading">
-        <h1>Available Vehicle List</h1>
-      </div>
+      
+      <form action="/click" method="post">
+        <div class="box" id="heading">
+          <h1>Available Vehicle List</h1>
+        </div>
+        <div>
+          <h4><%=content%></h4>
+        </div>
+      <input type="string" id="fname" name="user" value="<%=user%>">
       <div class="box">
         <table class="table">
         <thead>
@@ -23,7 +29,7 @@
             <th scope="col">Price</th>
           </tr>
         </thead>
-        <p id="username"><%=user%></p>
+      
         <% for(var i=0;i<newListItems.length;i++){ %>
           <div class="item">
                   <tbody>
@@ -34,8 +40,8 @@
                       <td><%=newListItems[i].carNo%></td>
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
-                      <td> <form action="/click" method="post">
-
+                      <td> 
+                       
                         <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
 
                        </form></td>
@@ -46,7 +52,17 @@
         </div>
    <%} %>
   </table>
-    <button type="submit" name="signout" class="signout">Sign Out</button>         
+  <h1>Review</h1>
+<form class="text-start" action="/review" method="post">
+    <div class="form-group">
+<div class="mb-3">
+    <label for="" class="">Enter your review</label> 
+    <textarea name="reviewBody" class="form-control" cols="5" rows="4"></textarea>
+</div>
+</div>
+<button type="submit" class="btn btn-primary" name="review" value="<%=user%>">Publish</button>
+</form>
+    <button type="submit" name="signout"  class="signout">Sign Out</button>         
     </div>
     <script src="app.js"></script>
     </body>
