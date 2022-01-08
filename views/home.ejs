@@ -11,38 +11,53 @@
       <div class="box" id="heading">
         <h1>Vehicle List</h1>
       </div>
-      <div class="box">
-        <% newListItems.forEach(function(item){%>
-                <div class="item">
-                    <p>
-                        <h1><%=item.modelName%></h1>
-                        <p>Car Year = <%=item.carYear%></p>
-                        <p>Car Number = <%=item.carNo%></p>
-                        <p>Car Transmission = <%=item.carTrans%></p>
-                        <p>Car Rate = <%=item.carRate%></p>
-                        <form action="/delete" method="post">
-                         <button type="submit" name="deleted" value="<%=item._id%>">Delete</button>
-                        </form>
-                        <form action="/addTo" method="post">
-                          <button type="submit" name="addTo" value="<%=item._id%>">Add to list</button>
-                         </form>
-                        </p>
-                       
-              </div>
-         <%}) %>
+     
+         <div class="box">
+          <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Model Name</th>
+              <th scope="col">Car Year</th>
+              <th scope="col">Car Number</th>
+              <th scope="col">Car Transmission</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <% for(var i=0;i<newListItems.length;i++){ %>
+            <div class="item">
+                    <tbody>
+                      <tr>
+                        <th scope="row"><%=i+1%></th>
+                        <td><%=newListItems[i].modelName%></td>
+                        <td><%=newListItems[i].carYear%></td>
+                        <td><%=newListItems[i].carNo%></td>
+                        <td><%=newListItems[i].carTrans%></td>
+                        <td><%=newListItems[i].carRate%></td>
+                        <td><form action="/delete" method="post">
+                          <button type="submit" name="deleted" value="<%=newListItems[i]._id%>">Delete</button>
+                         </form></td>
+                         <td>
+                         <form action="/addTo" method="post">
+                           <button type="submit" name="addTo" id="addButton" value="<%=newListItems[i]._id%>">Add to list</button>
+                          </form></td>
+                      </tr>
+                 
+                   
+          </div>
+     <%} %>
+    </table>
+    </div>
          <form class="item" action="/home" method="post">
             <button type="submit" name="list" value=""><a href="/add">Add</a></button>
           </form>
-          <form class="item2" action="/home" method="post">
+          <form class="item2" action="/book" method="post">
             <button type="submit" name="blist" value=""><a href="/booked">Booked vehicles</a></button>
           </form>
-
-          <form action="/logouta" method="post">
-            <button type="submit" name="logout" class="logout">Log Out</button>
-        
-          </form>
-                     
     </div>
+    <h4>
+    <a href="/users">Booked Vehicle Details</a>
+  </h4>
     
     </body>
 </html>

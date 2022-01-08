@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html leng="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+        <title>Vehicle list</title>
+     <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+      <div class="box" id="heading">
+
+        <h1>Vehicle List</h1>
+
+        <h1>User details</h1>
+
+      </div>
+     
+         <div class="box">
+          <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Email/th>
+              <th scope="col">Name</th>
+              <th scope="col">Adress</th>
+              <th scope="col">Phone Number</th>
+              <th scope="col">Model NAme</th>
+              <th scope="col">carNumber</th>
+            </tr>
+          </thead>
+          <% for(var i=0;i<newListItems.length;i++){ %>
+            <div class="item">
+                    <tbody>
+                      <tr>
+                        <th scope="row"><%=i+1%></th>
+                        <td><%=newListItems[i].userEmail%></td>
+                        <td><%=newListItems[i].userName%></td>
+                        <td><%=newListItems[i].userAdress%></td>
+                        <td><%=newListItems[i].userPhonenumber%></td>
+                        <td><%=newListItems[i].modelName%></td>
+                        <td><%=newListItems[i].carNumber%></td>
+                        <td><form action="/delete" method="post">
+                          <button type="submit" name="deleted" value="<%=newListItems[i]._id%>">Delete</button>
+                         </form></td>
+                         <td>
+                         <form action="/addTo" method="post">
+                           <button type="submit" name="addTo" id="addButton" value="<%=newListItems[i]._id%>">Add to list</button>
+                          </form></td>
+
+                        <td><%=newListItems[i].userAddress%></td>
+                        <td><%=newListItems[i].userPhonenumber%></td>
+                        <td><%=newListItems[i].modelName%></td>
+                        <td><%=newListItems[i].carNumber%></td>
+                        <td><div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Update Status
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a class="dropdown-item" href="#">Accept</a>
+                              <a class="dropdown-item" href="#">Pending</a>
+                              <a class="dropdown-item" href="#">Deny</a>
+                            </div>
+                          </div></td>
+
+                      </tr>
+                 
+                   
+          </div>
+     <%} %>
+    </table>
+    </div>
+         <form class="item" action="/home" method="post">
+            <button type="submit" name="list" value=""><a href="/add">Add</a></button>
+          </form>
+    </div>
+    
+
+
+    </body>
+</html>
