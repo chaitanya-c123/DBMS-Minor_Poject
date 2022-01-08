@@ -8,15 +8,22 @@
      <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-      
+     
       <form action="/click" method="post">
+        <h4>Hello<br><input type="string" id="fname" name="user" value="<%=user%>"></h4>
         <div class="box" id="heading">
           <h1>Available Vehicle List</h1>
         </div>
-        <div>
-          <h4><%=content%></h4>
+      
+        <div class="form-group">
+          <label for="cname">Arrival Date</label>
+          <input type="string" class="form-control" id="name" name="arrdate" placeholder="DD/MM/YYYY">
         </div>
-      <input type="string" id="fname" name="user" value="<%=user%>">
+        <div class="form-group">
+          <label for="address">Return Date</label>
+          <input type="string" class="form-control" name="retdate" placeholder="DD/MM/YYYY">
+        </div>
+       
       <div class="box">
         <table class="table">
         <thead>
@@ -42,7 +49,7 @@
                       <td><%=newListItems[i].carRate%></td>
                       <td> 
                        
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
+                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>"><a href="#previousBooking">click</a></button>
 
 
                       <td> <form action="/clicks" method="post">
@@ -56,6 +63,42 @@
         </div>
    <%} %>
   </table>
+  <h1 id="#previousBooking">Your Previos Bookings</h1>
+  <div class="box">
+    <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Adress</th>
+        <th scope="col">Contact Number</th>
+        <th scope="col">Model Name</th>
+        <th scope="col">Car Number</th>
+        <th scope="col">Arrival Date</th>
+        <th scope="col">Return Date</th>
+        <th scope="col">Total price</th>
+      </tr>
+    </thead>
+  
+    <% for(var i=0;i<previousBookings.length;i++){ %>
+      <div class="item">
+              <tbody>
+                <tr>
+                  <th scope="row"><%=i+1%></th>
+                  <td><%=previousBookings[i].userName%></td>
+                  <td><%=previousBookings[i].userAddress%></td>
+                  <td><%=previousBookings[i].userPhonenumber%></td>
+                  <td><%=previousBookings[i].modelName%></td>
+                  <td><%=previousBookings[i].carNumber%></td>
+                  <td><%=previousBookings[i].arrivalDate%></td>
+                  <td><%=previousBookings[i].returnDate%></td>
+                  <td><%=previousBookings[i].totPrice%></td>
+                </tr>
+           
+             
+    </div>
+<%} %>
+</table>
   <h1>Review</h1>
 <form class="text-start" action="/review" method="post">
     <div class="form-group">
@@ -66,10 +109,19 @@
 </div>
 <button type="submit" class="btn btn-primary" name="review" value="<%=user%>">Publish</button>
 </form>
-  <form action="/logout" method="POST">
-    <button type="submit" name="signout" class="signout">Sign Out</button> 
-  </form>        
+<br><br>
+<form class="text-start" action="/query" method="post">
+  <div class="form-group">
+<div class="mb-3">
+  <label for="" class="">Query</label> 
+  <textarea name="queryBody" class="form-control" cols="5" rows="2" placeholder="Enter your query"></textarea>
+</div>
+</div>
+<button type="submit" class="btn btn-primary" name="query" value="<%=user%>">Submit</button>
+</form>
+   <form action="/logout" method="post">
+    <button type="submit" name="signout"  class="signout">Sign Out</button>   
+    </form>      
     </div>
-    <script src="app.js"></script>
     </body>
 </html>
