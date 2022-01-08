@@ -3,5 +3,19 @@
     <div class="container-fluid">
 
     </div>
+
+    <div>
+
+    </div>
+    <section>
+        <div>
+        <h3>Customer Reviews<h3>
+        <%reviews.forEach(function(review){%>
+           <p> <h5><%=review.username%><h5></p>
+            <p><%=review.content%></p>
+   <% })%>
+        </div>
+    </section>
+
 </section>
 <%- include('partials/footer') %>
