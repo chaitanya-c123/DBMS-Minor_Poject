@@ -4,13 +4,19 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
-        <title>Vehicle list</title>
+        <title>customer</title>
      <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-      <div class="box" id="heading">
-        <h1>Available Vehicle List</h1>
-      </div>
+      
+      <form action="/click" method="post">
+        <div class="box" id="heading">
+          <h1>Available Vehicle List</h1>
+        </div>
+        <div>
+          <h4><%=content%></h4>
+        </div>
+      <input type="string" id="fname" name="user" value="<%=user%>">
       <div class="box">
         <table class="table">
         <thead>
@@ -23,6 +29,7 @@
             <th scope="col">Price</th>
           </tr>
         </thead>
+      
         <% for(var i=0;i<newListItems.length;i++){ %>
           <div class="item">
                   <tbody>
@@ -33,7 +40,10 @@
                       <td><%=newListItems[i].carNo%></td>
                       <td><%=newListItems[i].carTrans%></td>
                       <td><%=newListItems[i].carRate%></td>
-                      <td> <form action="/click" method="post"></form>
+                      <td> 
+                       
+                        
+                      <td> <form action="/click" method="post">
                         <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
                        </form></td>
                     </tr>
@@ -42,13 +52,20 @@
         </div>
    <%} %>
   </table>
-  <a class="btn btn-block" href="/logout" role="button">Log Out</a>
-  <!-- <form action="/logout" method="post">
-    <button type="submit" name="signout"  class="signout">Sign Out</button>
-
-  </form> -->
-             
+  <h1>Review</h1>
+<form class="text-start" action="/review" method="post">
+    <div class="form-group">
+<div class="mb-3">
+    <label for="" class="">Enter your review</label> 
+    <textarea name="reviewBody" class="form-control" cols="5" rows="4"></textarea>
+</div>
+</div>
+<button type="submit" class="btn btn-primary" name="review" value="<%=user%>">Publish</button>
+</form>
+  <form action="/logout" method="POST">
+    <button type="submit" name="signout" class="signout">Sign Out</button> 
+  </form>        
     </div>
-    
+    <script src="app.js"></script>
     </body>
 </html>

@@ -94,4 +94,26 @@ html {
     color: rgba(0, 0, 0, 0.5);
     text-align: center;
   }
+  .navbar-nav{
+    margin-left:auto;
+    color:aqua;
+  }
+  .dropdown__menu{
+    border: lpx solid #eee;
+    width: 120px;
+  }
+  .dropdown__menu button{
+    display:block;
+  }
+  .dropdown__button {
+    background :blueviolet;
+    border :none;
+    padding:5px;
+    width:120px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .hide{
+    display:none;
+  }
   
