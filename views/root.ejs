@@ -1,7 +1,51 @@
 <%- include('partials/header') %>
-<section>
-    <div class="container-fluid">
+    <div id="profile" class="container-fluid">
+       
+    </div>
+        <div id="vbcRentals" class="pt-5 pb-4">
+          <section class="section-1 container">
+                <h1 class="mb-4 text-primary">VBC RENTALS</h1>
+                <p>
+                  No matter who you are or where you are going, you deserve to enjoy your trip. VBC Rentals ensures
+                  a safe and inclusive experience of travelling, without exception. So, why think? 
+                  Hit the roads and explore your perfect weekend and vacations.VBC Rentals ensures cheapest rates. Don't think twice, book a ride now!
+                  Our commitment is to continue striving until traveling is an option available to everyone.
+                </p>
+          </section>
+          <section class="section-2 container">
+            <h1 class="mb-1 font-family:verdana text-danger">WE DON'T RENT CARS ONE WAY</h1>
+            <p class= "mb-4 fw-bolder">All rentals must be returned to the VBC branch from which they were rented.</p>
+          </section>
+        </div>
+    </div>
+<<<<<<< HEAD
+    </div>
+      <br><br>
+       <h3>Customer Reviews</h3>
+        <div class="d-md-flex">
+            <div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light w-100" style=" max-height: 300px;">
+                <%reviews.forEach(function(review){%>
+                    <p ><b><%=review.username%></b></p>
+                     <p><%=review.content%></p>
+                     <hr>
+            <% })%>
+                    </div>
+        </div>
+=======
+
+    <div>
 
     </div>
+    <section>
+        <div>
+        <h3>Customer Reviews<h3>
+        <%reviews.forEach(function(review){%>
+           <p> <h5><%=review.username%><h5></p>
+            <p><%=review.content%></p>
+   <% })%>
+        </div>
+    </section>
+>>>>>>> af1221b14e21a509ab117ff5fabf67e3fa3ad2fc
+
 </section>
 <%- include('partials/footer') %>
