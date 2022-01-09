@@ -1,43 +1,31 @@
-<!DOCTYPE html>
-<html leng="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <title>customer</title>
-     <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-
-      
+<%- include('partials/header') %>
+      <div id="customerimg" class="container-fluid">
+        <h1 class="main-text">Welcome</h1>
+      </div>
+      <br><br>
+      <div class="container">
       <form action="/click" method="post">
-        <div class="box" id="heading">
-          <h1>Available Vehicle List</h1>
+        <div class="box border" id="heading">
+          <br>
+          <h1 class="text-center heading">VEHICLES AVAILABLE</h1>
         </div>
-        <div>
-          <h4><%=content%></h4>
-        </div>
-      <input type="string" id="fname" name="user" value="<%=user%>">
-
-     
-      <form action="/click" method="post">
-        <h4>Hello<br><input type="string" id="fname" name="user" value="<%=user%>"></h4>
-        <div class="box" id="heading">
-          <h1>Available Vehicle List</h1>
-        </div>
-      
-        <div class="form-group">
-          <label for="cname">Arrival Date</label>
-          <input type="string" class="form-control" id="name" name="arrdate" placeholder="DD/MM/YYYY">
-        </div>
-        <div class="form-group">
-          <label for="address">Return Date</label>
-          <input type="string" class="form-control" name="retdate" placeholder="DD/MM/YYYY">
-        </div>
-       
-
+        <form>
+      <input type="text" readonly class="form-control-plaintext" id="userId" style="color:white" name="user" value="<%=user%>">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputEmail4"><b>Arrival Date</b></label>
+              <input  type="email" class="form-control" name="arrdate" id="inputEmail4" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputPassword4"><b>Return Date</b></label>
+              <input type="password" class="form-control" name="retdate" id="inputPassword4" placeholder="DD/MM/YYYY">
+            </div>
+          </div>
+        </form>
+      <br><br>
       <div class="box">
-        <table class="table">
-        <thead>
+        <table class="table table-hover">
+        <thead class="table-head">
           <tr>
             <th scope="col">#</th>
             <th scope="col">Model Name</th>
@@ -45,6 +33,7 @@
             <th scope="col">Car Number</th>
             <th scope="col">Car Transmission</th>
             <th scope="col">Price</th>
+            <th scope="col">Select</th>
           </tr>
         </thead>
       
@@ -53,38 +42,29 @@
                   <tbody>
                     <tr>
                       <th scope="row"><%=i+1%></th>
-                      <td><%=newListItems[i].modelName%></td>
-                      <td><%=newListItems[i].carYear%></td>
-                      <td><%=newListItems[i].carNo%></td>
-                      <td><%=newListItems[i].carTrans%></td>
-                      <td><%=newListItems[i].carRate%></td>
-                      <td> 
-                       
-
-                        
-                      <td> <form action="/click" method="post">
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>"><a href="#previousBooking">click</a></button>
-
-
-                      <td> <form action="/clicks" method="post">
-                        <button type="submit" name="click" class="dis" value="<%=newListItems[i]._id%>">click</button>
-
-
-                       </form></td>
-
+                      <td><b><%=newListItems[i].modelName%></b></td>
+                      <td><b><%=newListItems[i].carYear%></b></td>
+                      <td><b><%=newListItems[i].carNo%></b></td>
+                      <td><b><%=newListItems[i].carTrans%></b></td>
+                      <td><b><%=newListItems[i].carRate%></b></td>
+                       <td> <form action="/click" method="post">
+                        <button type="submit" name="click" class="btn-red"  value="<%=newListItems[i]._id%>">Click</button>
                     </tr>
                
                  
         </div>
    <%} %>
   </table>
-
-
-  <h1 id="#previousBooking">Your Previos Bookings</h1>
+<br><br><br>
+ <% if(previousBookings.length==0){%>
+  <h4>OOPS!! You Have No Previous Bookings.</h4>
+ <% }else{%>
+ 
+  <h1 id="#previousBooking" class="border heading">Your Previous Bookings</h1>
+  <br>
   <div class="box">
     <table class="table">
-    <thead>
+    <thead class="table-head">
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
@@ -103,52 +83,53 @@
               <tbody>
                 <tr>
                   <th scope="row"><%=i+1%></th>
-                  <td><%=previousBookings[i].userName%></td>
-                  <td><%=previousBookings[i].userAddress%></td>
-                  <td><%=previousBookings[i].userPhonenumber%></td>
-                  <td><%=previousBookings[i].modelName%></td>
-                  <td><%=previousBookings[i].carNumber%></td>
-                  <td><%=previousBookings[i].arrivalDate%></td>
-                  <td><%=previousBookings[i].returnDate%></td>
-                  <td><%=previousBookings[i].totPrice%></td>
+                  <td><b><%=previousBookings[i].userName%></b></td>
+                  <td><b><%=previousBookings[i].userAddress%></b></td>
+                  <td><b><%=previousBookings[i].userPhonenumber%></b></td>
+                  <td><b><%=previousBookings[i].modelName%></b></td>
+                  <td><b><%=previousBookings[i].carNumber%></b></td>
+                  <td><b><%=previousBookings[i].arrivalDate%></b></td>
+                  <td><b><%=previousBookings[i].returnDate%></b></td>
+                  <td><b><%=previousBookings[i].totPrice%></b></td>
                 </tr>
            
              
     </div>
 <%} %>
 </table>
-
-  <h1>Review</h1>
+ <% }%>
+<br><br>
+  <h3 style="color:#4C0027">Share Your experience</h3>
 <form class="text-start" action="/review" method="post">
     <div class="form-group">
 <div class="mb-3">
-    <label for="" class="">Enter your review</label> 
-    <textarea name="reviewBody" class="form-control" cols="5" rows="4"></textarea>
+    <label for="" class=""><b>Review</b></label> 
+    <textarea name="reviewBody" class="form-control input-boder" cols="5" rows="4" placeholder="Enter your review"></textarea>
 </div>
 </div>
-<button type="submit" class="btn btn-primary" name="review" value="<%=user%>">Publish</button>
+<button type="submit" class="btn-red" name="review" value="<%=user%>">Publish</button>
 </form>
 
-  <form action="/logout" method="POST">
-    <button type="submit" name="signout" class="signout">Sign Out</button> 
-  </form>        
-    </div>
-    <script src="app.js"></script>
-
 <br><br>
+</form>
+<h3 style="color:#4C0027">Post Your Queries</h3>
 <form class="text-start" action="/query" method="post">
   <div class="form-group">
 <div class="mb-3">
-  <label for="" class="">Query</label> 
+  <label for="" class=""><b>Query</b></label> 
   <textarea name="queryBody" class="form-control" cols="5" rows="2" placeholder="Enter your query"></textarea>
 </div>
 </div>
-<button type="submit" class="btn btn-primary" name="query" value="<%=user%>">Submit</button>
+<button type="submit" class="btn-red" name="query" value="<%=user%>">Submit</button>
 </form>
-   <form action="/logout" method="get">
-    <button type="submit" name="signout"  class="signout">Sign Out</button>   
+<br><br>
+   <form action="/logout" method="post">
+     <div class="text-center">
+    <button type="submit" name="signout"  class="signout btn btn-danger">Sign Out</button>   
+  </div>
     </form>      
     </div>
+  </div>
 
     </body>
 </html>
