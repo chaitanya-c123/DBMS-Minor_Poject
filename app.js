@@ -18,6 +18,8 @@ const path=require('path');
 var nodemailer=require('nodemailer');
 
 
+
+
 //const usermodel=require("./models/user");
 
 
@@ -36,12 +38,13 @@ app.use(flash());
 
  app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static(path.join(__dirname,'public')));
 console.log(process.env.API_KEY);
 mongoose.connect("mongodb://localhost:27017/rentalDB",{useNewUrlParser:true});
 
 
    
-app.use(express.static(path.join(__dirname,'public')));
+
 const userSchema=new mongoose.Schema({
     username:String,
     password:String
@@ -73,10 +76,6 @@ const userDetailSchema=new mongoose.Schema({
     userPhonenumber:String,
     modelName:String,
     carNumber:String,
-
-    status:String,
-    accept:String,
-    deny:String,
     arrivalDate:String,
     returnDate:String,
     status:String,
@@ -97,7 +96,6 @@ const querySchema=new mongoose.Schema({
 let vehicleList=[];
 let availVehicleList=[];
 let bookedVehicleList=[];
-let newListItems=[];
 const User=new mongoose.model("User",userSchema);
 const Userc=new mongoose.model("Userc",usercSchema);
 const Vehicle=mongoose.model("Vehicle",vehicleSchema);
@@ -167,11 +165,6 @@ app.get("/homec",function(req,res){
     res.render("homec");
 });
 
-
-// app.get("/register",function(req,res){
-//     res.render("register");
-//   });
-
 app.get("/register",function(req,res){
     res.render("register");
   });
@@ -223,11 +216,6 @@ app.post("/login",function(req,res){
 
 });
 app.get("/root",function(req,res){
-
-    res.render("root");
-});
-app.get("/home",isAutha,function(req,res){
-
     Review.find({},function(err,reviewList){
         if(reviewList.length>=0)
         {
@@ -238,7 +226,7 @@ app.get("/home",isAutha,function(req,res){
             console.log(err);
         }
         else{
-            console.log("Successfully root list shown");
+            console.log("Successfully shown");
         }
     });
 });
@@ -260,7 +248,7 @@ app.get("/home",function(req,res){
     });
 
 })
-
+let defcontent="Select your car";
 app.get("/customer",function(req,res){
     
     if(req.isAuthenticated())
@@ -273,8 +261,6 @@ app.get("/customer",function(req,res){
             if(availVehicleList.length>=0)
             {
 
-                res.render("customer",{newListItems:availVehicleList,user:currentUser,content:defcontent});
-
                 res.render("customer",{newListItems:availVehicleList,user:currentUser,previousBookings:previousBook});
 
             }
@@ -285,7 +271,6 @@ app.get("/customer",function(req,res){
             else{
                 console.log("Successfully customer list shown");
             }
-  
         });
         });
     }
@@ -312,49 +297,44 @@ app.get("/booked",function(req,res){
   })
 
 });
+app.post("/book",function(req,res){
+    res.redirect("/booked");
+});
+
+app.get("/previousQuery",function(req,res){
+
+})
 
 app.get("/add",function(req,res){
     res.render("add");
 });
 app.post("/add",function(req,res){
-    const vehicle=new Vehicle({
+    const vehDetails={
         modelName:req.body.modelName,
         carYear:req.body.carYear,
         carNo:req.body.carNo,
         carTrans:req.body.carTrans,
         carRate:req.body.carRate
 
+    };
+    const vehicle=new Vehicle({
+        modelName:vehDetails.modelName,
+        carYear:vehDetails.carYear,
+        carNo:vehDetails.carNo,
+        carTrans:vehDetails.carTrans,
+        carRate:vehDetails.carRate
     });
+   
     vehicle.save();
+   // available.save();
     res.redirect("/home");
 });
-
-    const newUser=new User({
-    email:req.body.email,
-    password:md5(req.body.password),
-    });
-    newUser.save();
-    res.redirect("/home");
-  });
-    
-    app.post("/login",function(req,res){
-        const username=req.body.email;
-        const password=md5(req.body.password);
-    
-       User.findOne({email:username},function(err,foundUser){
-           if(err){
-               console.log(err);
-           }else{
-               if(foundUser){
-                   if(foundUser.password===password){
-                       res.redirect("/home");
-                   }
-               }
-           }
-       })
-        
-    });
-
+app.post("/addPage",function(req,res){
+    res.redirect("/add");
+});
+app.get("/contact",function(req,res){
+    res.render("contact");
+})
 app.post("/delete",function(req,res){
     const vehicleId=req.body.deleted;
     Vehicle.findByIdAndRemove(vehicleId,function(err){
@@ -382,7 +362,7 @@ app.post("/addTo",function(req,res){
                         carNo:avl.carNo,
                         carTrans:avl.carTrans,
                         carRate:avl.carRate 
-                    });
+                   });
                 availvehicle.save();
                 }
             }
@@ -392,179 +372,121 @@ app.post("/addTo",function(req,res){
     res.redirect("/home");
 });
 
-app.post("/click",function(req,res){
 
- 
-    console.log("click");
+app.post("/click",function(req,res){
     const vehicleId=req.body.click;
     const email=req.body.user;
+    var arrDate=req.body.arrdate;
+    var retDate=req.body.retdate;
     let userdetail;
-    if(req.isAuthenticated())
+    
+      
+if(req.isAuthenticated())
     {
+        console.log("click");
         console.log(req.user.phoneNumber);
         const cur=req.user.username;
 
-        Userc.findOne({username:email},function(err,user){
-            console.log(user);
+
+    Userc.findOne({username:email},function(err,user){
+        console.log(user);
+        if(!err){
+        AvailVehicle.findById(vehicleId,function(err,book){
             if(!err){
-                userdetail=user.name;
-            AvailVehicle.findById(vehicleId,function(err,book){
-                if(!err){
-                    var ve=book.modelName;
-                    var cn0=book.carNo;
-                const bookvehicle=new BookedVehicle({
-                    modelName:book.modelName,
-                    carYear:book.carYear,
-                    carNo:book.carNo,
-                    carTrans:book.carTrans,
-                    carRate:book.carRate
-            
-                });
-              //  defcontent="Hello"+userdetail.name+". Thank you for using VBC RENTALS, your booking details will be sent via mail"+"Selected car details"+ "\nmodel Name"+book.modelName+"\ncar Year"+book.carYear+"\ncarNo"+book.carNo+"\ncarTrans"+book.carTrans+"\ncarRate"+book.carRate;
-                let newUser=new UserDetail({
-                    userEmail:user.username,
-                    userName:user.name,
-                    userAddress:user.address,
-                    userPhonenumber:user.phoneNumber,
-                    modelName:book.modelName,
-                    carNumber:book.carYear,
-                    status:"Pending",
-                    accept:"Accept",
-                    deny:"Deny"
+                var ve=book.modelName;
+                var cn0=book.carNo;
+            let bookvehicle=new BookedVehicle({
+                modelName:book.modelName,
+                carYear:book.carYear,
+                carNo:book.carNo,
+                carTrans:book.carTrans,
+                carRate:book.carRate
         
-                });
-                bookvehicle.save();
-                newUser.save();
-                console.log(ve);
+            });
+        var price;
+        var no_of_days;
+        var aryear=Number(arrDate.substring(6,10));
+        var retyear=Number(retDate.substring(6,10));
+        var retmon=Number(retDate.substring(3,5));
+        var arrmon=Number(arrDate.substring(3,5));
+        var arrdat=Number(arrDate.substring(0,2));
+        var retdat=Number(retDate.substring(0,2));
+        if((retyear-aryear)>0){
+            retmon+=(retyear-aryear)*12;
+            }
+            if((retmon-arrmon)>0){
+                retdat+=(retmon-arrmon)*30;
+            }
+            no_of_days=retdat-arrdat;
+            price=book.carRate*no_of_days;
 
-
-                var transport=nodemailer.createTransport(
-                    {
-                        host: 'smtp.gmail.com',
-                    port: 465,
-                    secure: true,
-                        auth:{
-                            user:'vasbhach@gmail.com',
-                            pass:'303560db'
-                
-                
-                        }
+            let newUser=new UserDetail({
+                userEmail:user.username,
+                userName:user.name,
+                userAddress:user.address,
+                userPhonenumber:user.phoneNumber,
+                modelName:book.modelName,
+                carNumber:book.carNo,
+                status:"Pending",
+                arrivalDate:arrDate,
+                returnDate:retDate,
+                totPrice:price
+            });
+            
+            bookvehicle.save();
+            newUser.save();
+            var transport=nodemailer.createTransport(
+                {
+                    host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                    auth:{
+                        user:'vasbhach@gmail.com',
+                        pass:'303560db'
+            
+            
                     }
-                )
-                
-                var mailOptions={
-                    from:'vasbhach@gmail.com',
-                    to:cur,
-                    subject:'VBC RENTALS',
-                    text:`Thank you for chosing VBC rentals. You have selected ${ve}.Vehicle number is ${cn0} `
                 }
-                transport.sendMail(mailOptions,function(error,info){
-                    if(error){
-                        console.log(error)
-                    } else{
-                        console.log('email sent'+info.response);
-                    }
-                });
-
-
-                }
-                else{
-                    console.log(err);
+            )
+            
+            var mailOptions={
+                from:'vasbhach@gmail.com',
+                to:cur,
+                subject:'VBC RENTALS',
+                text:`Thank you for chosing VBC rentals. You have selected ${ve}.Vehicle number is ${cn0} `
+            }
+            transport.sendMail(mailOptions,function(error,info){
+                if(error){
+                    console.log(error)
+                } else{
+                    console.log('email sent'+info.response);
                 }
             });
-            AvailVehicle.findByIdAndRemove(vehicleId,function(err){
-                if(!err){
-                    console.log("successfully deleted");
-                    res.redirect("/customer");
-                }
-                else{
-                    console.log(err);
-                }
-            })
+
+
         }
+            else{
+                console.log(err);
+            }
         });
-
-
-    }
-    else{
-        res.redirect('/loginc');
-    }
-
-});
-
-    console.log("click");
-var vehicleId=req.body.click;
-var email=req.body.user;
-var arrDate=req.body.arrdate;
-var retDate=req.body.retdate;
-
-
-Userc.findOne({username:email},function(err,user){
-    console.log(user);
-    if(!err){
-    AvailVehicle.findById(vehicleId,function(err,book){
-        if(!err){
-        let bookvehicle=new BookedVehicle({
-            modelName:book.modelName,
-            carYear:book.carYear,
-            carNo:book.carNo,
-            carTrans:book.carTrans,
-            carRate:book.carRate
-    
-        });
-       var price;
-       var no_of_days;
-       var aryear=Number(arrDate.substring(6,10));
-       var retyear=Number(retDate.substring(6,10));
-       var retmon=Number(retDate.substring(3,5));
-       var arrmon=Number(arrDate.substring(3,5));
-       var arrdat=Number(arrDate.substring(0,2));
-       var retdat=Number(retDate.substring(0,2));
-       if((retyear-aryear)>0){
-           retmon+=(retyear-aryear)*12;
-        }
-        if((retmon-arrmon)>0){
-             retdat+=(retmon-arrmon)*30;
-        }
-        no_of_days=retdat-arrdat;
-        price=book.carRate*no_of_days;
-
-        let newUser=new UserDetail({
-            userEmail:user.username,
-            userName:user.name,
-            userAddress:user.address,
-            userPhonenumber:user.phoneNumber,
-            modelName:book.modelName,
-            carNumber:book.carNo,
-            status:"Pending",
-            arrivalDate:arrDate,
-            returnDate:retDate,
-            totPrice:price
+        AvailVehicle.findByIdAndRemove(vehicleId,function(err){
+            if(!err){
+                console.log("successfully deleted");
+                res.redirect("/customer");
+            }
+            else{
+                console.log(err);
+            }
         });
         
-        bookvehicle.save();
-        newUser.save();
-      
-          
-        }
-        else{
-            console.log(err);
-        }
+    }
     });
-    AvailVehicle.findByIdAndRemove(vehicleId,function(err){
-        if(!err){
-            console.log("successfully deleted");
-            res.redirect("/customer");
-        }
-        else{
-            console.log(err);
-        }
-    });
-    
 }
-});
-});
+else{
+    res.redirect('/loginc');
+}
 
+});
 
 
 
@@ -625,6 +547,9 @@ app.get("/users",function(req,res){
         });
 
 });
+app.post("/users",function(req,res){
+    res.redirect("/users");
+});
 app.post("/review",function(req,res){
     const newReview=new Review({
         username:req.body.review,
@@ -633,52 +558,6 @@ app.post("/review",function(req,res){
     newReview.save();
     res.redirect("/customer");
 });
-
-app.post("/statusAccept",function(req,res){
-   const userId=req.body.accept;
-   console.log(userId);
-   const update={
-       status:"Accepted",
-       accept:"Accepted",
-       deny:""
-   };
-    UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
-        if(!err){
-        console.log(userInfo);     
-        }
-        else{
-            console.log("err");
-        }
-    });
-    res.redirect("/users");
-
-});
-app.post("/statusDeny",function(req,res){
-    const userId=req.body.deny;
-    console.log(userId);
-    const update={
-        status:"Denied",
-        accept:"",
-        deny:"Denied"
-    };
-     UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
-         if(!err){
-         console.log(userInfo);     
-         }
-         else{
-             console.log("err");
-         }
-     });
-     res.redirect("/users");
- 
- });
-app.get("/logout",function(req,res){
-    console.log(req.user.email);
-    req.logout();
-    
-    res.redirect("/loginc");
-});
-
 app.post("/query",function(req,res){
     const newquery=new Query({
         username:req.body.query,
@@ -787,66 +666,21 @@ app.post("/statusDeny",function(req,res){
     res.redirect("/users");
     
  })
-app.get("/logout",function(req,res){
-    console.log(req.user.email);
-    req.logout();
-    
-    res.redirect("/loginc");
-});
-
-
-const userDetails1=[];
-app.get("/users",function(req,res){
-    UserDetail.find({},function(err,userDetails1){
-          if(userDetails1.length>0)
-          {
-              res.render("users",{newListItems:userDetails1});
-          }
-          if(err){
-              console.log(err);
-          }
-    })
-    res.render("users",{newListItems:userDetails1});
-});
-
-
-
-
-
 app.post("/logout",function(req,res){
     // console.log(req.user.email);
      req.logout();
      
      res.redirect("/loginc");
- })
+ });
 
 app.post("/logouta",(req,res) =>{
     req.session.destroy((err)=>{
         if(err) throw err;
         res.redirect("/login");
     })
-
-
-
-
-
-app.post("/logout",(req,res)=>{
-    req.session.destroy((err)=>{
-        if(err) throw err;
-        res.redirect("/loginc");
-        currentUser.pop();
-    })
-});
-app.post("/logouta",(req,res)=>{
-    req.session.destroy((err)=>{
-        if(err) throw err;
-        res.redirect("/login");
-    })
-
-
 });
 
 
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
-})
+});
