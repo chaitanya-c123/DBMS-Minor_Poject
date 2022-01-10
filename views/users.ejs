@@ -15,14 +15,29 @@
          <div>
           <table class="box">
           <thead class="table">
+
+      <h1>User details</h1>
+      <div class="box" id="heading">
+         <div>
+          <table class="table">
+          <thead>
+
             <tr>
               <th scope="col">#</th>
               <th scope="col">Email/th>
               <th scope="col">Name</th>
               <th scope="col">Adress</th>
               <th scope="col">Phone Number</th>
+
               <th scope="col">Model NAme</th>
               <th scope="col">carNumber</th>
+
+              <th scope="col">Model Name</th>
+              <th scope="col">carNumber</th>
+              <th scope="col">Arrival Date</th>
+              <th scope="col">Return Date</th>
+              <th scope="col">Total Price</th>
+
             </tr>
           </thead>
           <% for(var i=0;i<newListItems.length;i++){ %>
@@ -38,6 +53,20 @@
                         <td><%=newListItems[i].carNumber%></td>
                         <td><form action="/statusAccept" method="post"><button name="accept" value="<%=newListItems[i]._id%>"><%=newListItems[i].accept%></button></form></td>
                         <td><form action="/statusDeny" method="post"><button name="deny" value="<%=newListItems[i]._id%>"><%=newListItems[i].deny%></button></form></td>
+                        <td><%=newListItems[i].arrivalDate%></td>
+                        <td><%=newListItems[i].returnDate%></td>
+                        <td><%=newListItems[i].totPrice%></td>
+                       <% if(newListItems[i].status==="Pending"){%>
+                        <td><form action="/statusAccept" method="post"><button name="accept" value="<%=newListItems[i]._id%>">Accept</button></form></td>
+                        <td><form action="/statusDeny" method="post"><button name="deny" value="<%=newListItems[i]._id%>">Deny</button></form></td>
+                        <%}%>
+                        <%if(newListItems[i].status==="Accepted"){%>
+                          <td><form action="/statusAccept" method="post"><button name="accept" value="<%=newListItems[i]._id%>">Accepted</button></form></td>
+                        <%}%>
+                        <%if(newListItems[i].status==="Denied"){%>
+                          <td><form action="/statusDeny" method="post"><button name="deny" value="<%=newListItems[i]._id%>">Denied</button></form></td>
+                        <%}%>
+                        <td><form action="/addBack" method="post"><button name="number" value="<%=newListItems[i].carNumber%>">Add back</button></form></td>
                       </tr>
                   </div>
      <%} %>

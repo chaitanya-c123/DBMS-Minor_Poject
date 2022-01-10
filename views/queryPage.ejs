@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+<section>
+    <div class="container-fluid">
+
+    </div>
+    <div>
+
+    </div>
+    <section>
+        <div>
+        <h3>Customer queries<h3>
+        <%queries.forEach(function(query){%>
+           <p> <h5><%=query.username%><h5></p>
+            <p><%=query.queryContent%></p>
+            <form class="text-start" action="/queryReply" method="post">
+            <div class="form-group">
+                <div class="mb-3">
+                  <label for="" class="">Reply</label> 
+                  <% if(query.reply===""){%>
+                  <textarea name="queryBody" class="form-control" cols="5" rows="2" placeholder="Enter your query"></textarea>
+                  <button type="submit" class="btn btn-primary" name="queryId" value="<%=query._id%>">Submit</button>
+                  <%}else{%>
+                      <p><%=query.reply%></p>
+                  <%}%>
+                </div>
+                </div>
+             </form>
+   <% })%>
+        </div>
+    </section>
+</section>
+<%- include('partials/footer') %>

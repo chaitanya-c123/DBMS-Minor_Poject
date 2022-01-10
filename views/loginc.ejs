@@ -1,43 +1,77 @@
-<%- include('partials/header') %>
 
-<div class="container mt-5">
-  <h1>Login for customer</h1>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="body">
+
+
+  <div class="container">
+  
   
  
-  <div class="row">
-    <div class="col-sm-8">
-      <div class="card">
-        <div class="card-body">
-
-          <!-- Makes POST request to /login route -->
-          <form action="/loginc" method="POST">
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="string" class="form-control" id="email" name="username">
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password">
-            </div>
-            <button type="submit" class="btn btn-dark">Login</button>
-          </form>
-
+    <!-- <div class="row">
+      <div class="col-sm-8">
+        <div class="card">
+          <div class="card-body">
+            <h1>SIGN IN TO YOUR ACCOUNT</h1>
+            <!-- Makes POST request to /login route -->
+            <!-- <form action="/loginc" method="POST">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="string" class="form-control" id="email" name="username">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+              </div>
+              <button type="submit" class="btn btn-dark">Login</button>
+            </form>
+  
+          </div>
         </div>
-      </div>
+      </div> -->
+  
+      <!-- <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <a class="btn btn-block" href="/auth/google" role="button">
+              <i class="fab fa-google"></i>
+              Sign In with Google
+            </a>
+          </div>
+        </div>
+      </div> --> -->
+  
+    <!-- </div> -->
+  
+      <div class="header">
+         <h1>Login</h1>
+       </div>
+    <div class="main">
+     <form action="/loginc" method="POST">
+      <span>
+        
+        <input type="string" class="form-control" id="email" name="username">
+      </span><br>
+      <span>
+        
+        <input type="password" class="form-control" id="password" name="password">
+      </span><br>
+      <button type="submit" class="btn btn-dark">Login</button>
+     </form>
     </div>
+  
+  
+  
+  
+  
+  
+  
+   </div>
 
-    <!-- <div class="col-sm-4">
-      <div class="card">
-        <div class="card-body">
-          <a class="btn btn-block" href="/auth/google" role="button">
-            <i class="fab fa-google"></i>
-            Sign In with Google
-          </a>
-        </div>
-      </div>
-    </div> -->
 
-  </div>
 </div>
-
+ 
+</body>
 <%- include('partials/footer') %>
