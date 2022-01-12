@@ -3,14 +3,16 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/style.css">
+  
         <title>Add vehicle</title>
-     <link rel="stylesheet" href="css/style.css">
+     <link rel="stylesheet" href="styleform.css">
     </head>
     <body>
+    <div class="body">
+      <div class="container">
     <form action="/add" method="post">
       <div class="box" id="heading">
-        <h1>Please fill the details of new Vehicle</h1>
+        <h1>Enter Vehicle Details</h1>
         <div class="mb-3">
             <label  class="form-label">Model name</label>
             <input type="text" name="modelName" class="form-control" placeholder="Enter the Car model">
@@ -27,14 +29,15 @@
             <label  class="form-label">Car transmission</label>
             <input type="text" name="carTrans"  class="form-control"  placeholder="car transmission">
           </div>
-          <div class="mb-3">
-            <label  class="form-label">Car rate per Kilometer</label>
+          <div class="mb-3"><b>Price Per Day</b></label>
             <input type="text" name="carRate" class="form-control"  placeholder="Rate per km">
           </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <br>
+    <button type="submit" class="btn btn-primary text-center">Submit</button>
+  </div>
 </div>
 </form>
-    
+</div>
     </body>
 </html>

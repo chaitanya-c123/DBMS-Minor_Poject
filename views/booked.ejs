@@ -1,19 +1,21 @@
-<!DOCTYPE html>
-<html leng="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/style.css">
-        <title>Vehicle list</title>
-     <link rel="stylesheet" href="css/style.css">
-    </head>
-    <body>
-      <div class="box" id="heading">
-        <h1>Booked Vehicle List</h1>
-      </div>
-      <div class="box">
-        <table class="table">
-        <thead>
+<%- include('partials/header') %>
+<br>
+<form action="/back" method="post">
+  <div class="text-left ">
+    <button type="submit" name="signout"  class="signout btn btn-success"><--BACK</button></div>
+  </form>  
+ <div class="box text-center container" id="heading">
+   <br>
+ <h1 class="border">BOOKED VEHICLE LIST</h1>
+  <% if(newListItems.length==0){%>
+     <h3>There are no current booked vehicles</h3>
+    <%}else{%>
+     
+      <br><br>
+    </div>
+      <div class="box container">
+        <table class="table table-hover">
+        <thead class="table-head">
           <tr>
             <th scope="col">#</th>
             <th scope="col">Model Name</th>
@@ -40,7 +42,7 @@
         </div>
    <%} %>
   </table>
-                       
+<%}%>              
     </div>
     
     </body>

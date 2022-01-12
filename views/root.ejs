@@ -1,21 +1,64 @@
 <%- include('partials/header') %>
 <section>
-    <div class="container-fluid">
-
-    </div>
-
-    <div>
-
-    </div>
-    <section>
-        <div>
-        <h3>Customer Reviews<h3>
-        <%reviews.forEach(function(review){%>
-           <p> <h5><%=review.username%><h5></p>
-            <p><%=review.content%></p>
-   <% })%>
+        <div id="profile" class="container-fluid">
+           <h1 class="main-text">VBC RENTALS</h1>
         </div>
-    </section>
-
-</section>
-<%- include('partials/footer') %>
+        <div class="container">
+          <br><br>
+            <div id="vbcRentals" class="pt-5 pb-4">
+              <section class="section-1 container">
+                    <p><b>
+                      No matter who you are or where you are going, you deserve to enjoy your trip. VBC Rentals ensures
+                      a safe and inclusive experience of travelling, without exception. So, why think? 
+                      Hit the roads and explore your perfect weekend and vacations.VBC Rentals ensures cheapest rates. Don't think twice, book a ride now!
+                      Our commitment is to continue striving until traveling is an option available to everyone.
+                    </b> </p>
+              </section>
+              <br><br>
+              <section class="section-2 container">
+                <h1 class="mb-1 font-family:verdana text-danger"><b>WE DON'T RENT CARS ONE WAY</b></h1>
+                <p class= "mb-4 fw-bolder">All rentals must be returned to the VBC branch from which they were rented.</p>
+              </section>
+            </div>
+        </div>
+        </div>
+          <br><br>
+          <section class="section-5 my-7">
+            <div class="content text-center container">
+              <h1>Login for more details</h1><br>
+              <h5>If you want to know more about  various Bookings and its details, Do login </h5>
+              <a class="btn btn-success btn-lg" href="/customer">LOGIN</a><br>
+            </div>
+          </section>
+          <br><br><br>
+        
+        </div> 
+        <h1 class="text-center heading" >Customer Reviews</h1>
+        <br>
+         <div class="d-md-flex container border py-2 ">
+             <div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light w-100  review" style=" max-height: 300px;">
+                 <%reviews.forEach(function(review){%>
+                     <p style="color:white"><b><%=review.username%></b></p>
+                      <p style="color:white"><%=review.content%></p>
+                      <hr>
+             <% })%>
+                     </div>
+         </div>
+         <br><br>
+         <h1 class="text-center heading" >Frequently Asked Questions</h1>
+        <br>
+         <div class="d-md-flex container border py-2 ">
+             <div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light w-100  review" style=" max-height: 300px;">
+                 <%queries.forEach(function(query){%>
+                     <p style="color:white"><b><%=query.queryContent%></b></p>
+                     <%if(query.reply!=""){%>
+                      <p style="color:white"><%=query.reply%></p>
+                    <% }%>
+                      <hr>
+             <% })%>
+                     </div>
+         </div>
+        </div>
+        <br><br>
+      </section>>
+        <%- include('partials/footer') %>
