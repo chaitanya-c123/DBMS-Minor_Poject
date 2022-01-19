@@ -50,9 +50,9 @@
          <div class="d-md-flex container border py-2 ">
              <div class="overflow-auto p-3 mb-3 mb-md-0 mr-md-3 bg-light w-100  review" style=" max-height: 300px;">
                  <%queries.forEach(function(query){%>
-                     <p style="color:white"><b><%=query.queryContent%></b></p>
+                     <p style="color:white"><b>Q : <%=query.queryContent%></b></p>
                      <%if(query.reply!=""){%>
-                      <p style="color:white"><%=query.reply%></p>
+                      <p style="color:white">A :<%=query.reply%></p>
                     <% }%>
                       <hr>
              <% })%>

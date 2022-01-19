@@ -223,3 +223,27 @@ width:100%;
   .review{
     background-image:url(/images/footer.jpg);
   }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position:absolute;
+    background-color: #0a0909;
+    min-width:160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+  
+  .dropdown-content a:hover {background-color: #f1f1f1}
+  
+  .show {display:block;}
+  .profileImg{
+    width:270px;
+    height:270px;
+    border-radius:135px;
+  }
+  
