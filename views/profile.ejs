@@ -96,6 +96,7 @@
           <thead class="table-head">
             <tr>
               <th scope="col">#</th>
+              <th scope="col">Booking Number</th>
               <th scope="col">Name</th>
               <th scope="col">Adress</th>
               <th scope="col">Contact Number</th>
@@ -104,6 +105,7 @@
               <th scope="col">Arrival Date</th>
               <th scope="col">Return Date</th>
               <th scope="col">Total price</th>
+              <th scope="col">Status</th>
             </tr>
           </thead>
         
@@ -112,6 +114,7 @@
                     <tbody>
                       <tr>
                         <th scope="row"><%=i+1%></th>
+                        <td><b><%=previousBookings[i].bookingNumber%></b></td>
                         <td><b><%=previousBookings[i].userName%></b></td>
                         <td><b><%=previousBookings[i].userAddress%></b></td>
                         <td><b><%=previousBookings[i].userPhonenumber%></b></td>
@@ -120,6 +123,7 @@
                         <td><b><%=previousBookings[i].arrivalDate%></b></td>
                         <td><b><%=previousBookings[i].returnDate%></b></td>
                         <td><b><%=previousBookings[i].totPrice%></b></td>
+                        <td><b><%=previousBookings[i].status%></b></td>
                       </tr>
                  
                    

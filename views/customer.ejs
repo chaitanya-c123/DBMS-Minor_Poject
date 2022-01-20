@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="css/bootstrap-social.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-dark">
@@ -25,7 +25,7 @@
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/customer">User login</a>
+          <a class="nav-link" href="/customer/<%=user%>">User login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/registerc">Register</a>
@@ -35,14 +35,13 @@
         </li>
         <li class="nav-item">
           <div class="dropdown">
-              <!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
-              <div class="navbar-brand">
-                <%if(image!=" "){%>
-                  <img id="myBtn" class="dropbtn" src="/upload/<%=image%>">
+               <div class="navbar-brand">
+                <%if(images!=" "){%>
+                  <img id="myBtn" class="dropbtn" src="/upload/<%=images%>">
                   <%}else{%>
                 <img id="myBtn" class="dropbtn" src="/images/profile.png">
                   <%}%>
-            </div>
+                </div>  
               <div id="myDropdown" class="dropdown-content">
                   <form action="/profile" method="post">
                       <button class="btn btn-dark" name="profileName" value="<%=user%>">Veiw Profile</button>
@@ -52,7 +51,7 @@
                      </form>
               </div>
           </div>
-        </li>
+        </li> 
         <li class="nav-item">
           
         </li>
@@ -82,39 +81,26 @@
             </div>
           </div>
       <br><br>
-      <div class="box">
-        <table class="table table-hover">
-        <thead class="table-head">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Model Name</th>
-            <th scope="col">Car Year</th>
-            <th scope="col">Car Number</th>
-            <th scope="col">Car Transmission</th>
-            <th scope="col">Price</th>
-            <th scope="col">Select</th>
-          </tr>
-        </thead>
-      
-        <% for(var i=0;i<newListItems.length;i++){ %>
-          <div class="item">
-                  <tbody>
-                    <tr>
-                      <th scope="row"><%=i+1%></th>
-                      <td><b><%=newListItems[i].modelName%></b></td>
-                      <td><b><%=newListItems[i].carYear%></b></td>
-                      <td><b><%=newListItems[i].carNo%></b></td>
-                      <td><b><%=newListItems[i].carTrans%></b></td>
-                      <td><b><%=newListItems[i].carRate%></b></td>
-                       <td> 
-                        <button type="submit" name="click" class="btn-red"  value="<%=newListItems[i]._id%>">Select</button></td>
-                      </form>
-                    </tr>
-               
-                 
-        </div>
-   <%} %>
-  </table>
+      <%if(newListItems.length==0){%>
+        <h3>OOPS! Currently No vehicles Available</h3>
+      <%}else{%>
+    <div class="container">
+    <div class="row">
+      <% for(var i=0;i<newListItems.length;i++){ %>
+                   <div class="col-md-3 border text-center">
+                     <img style="max-height:300px;max-width:300px" src="/upload/<%=newListItems[i].image%>"><br>
+                    <b><span style="font-size: large;color:brown">ModelName </span>: <%=newListItems[i].modelName%></b><br>
+                    <b><span style="font-size: large;color:brown">Car Year</span> : <%=newListItems[i].carYear%></b><br>
+                    <b><span style="font-size: large;color:brown">Car Number</span> : <%=newListItems[i].carNo%></b><br>
+                    <b><span style="font-size: large;color:brown">Car Transmission</span> : <%=newListItems[i].carTrans%></b><br>
+                    <b><span style="font-size: large;color:brown">Car Price per Day</span> : <%=newListItems[i].carRate%></b><br><br>
+                      <button type="submit" name="click" class="btn-red"  value="<%=newListItems[i]._id%>">Select</button></td>
+                    </form>
+                </div>
+                <%}}%>
+    </div>
+  </div>
+  
 <br><br><br>
  <% if(previousBookings.length==0){%>
   <h4>OOPS!! You Have No Previous Bookings.</h4>
@@ -127,6 +113,7 @@
     <thead class="table-head">
       <tr>
         <th scope="col">#</th>
+        <th scope="col">Booking Number</th>
         <th scope="col">Name</th>
         <th scope="col">Adress</th>
         <th scope="col">Contact Number</th>
@@ -135,6 +122,7 @@
         <th scope="col">Arrival Date</th>
         <th scope="col">Return Date</th>
         <th scope="col">Total price</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
   
@@ -143,6 +131,7 @@
               <tbody>
                 <tr>
                   <th scope="row"><%=i+1%></th>
+                  <td><b><%=previousBookings[i].bookingNumber%></b></td>
                   <td><b><%=previousBookings[i].userName%></b></td>
                   <td><b><%=previousBookings[i].userAddress%></b></td>
                   <td><b><%=previousBookings[i].userPhonenumber%></b></td>
@@ -151,13 +140,13 @@
                   <td><b><%=previousBookings[i].arrivalDate%></b></td>
                   <td><b><%=previousBookings[i].returnDate%></b></td>
                   <td><b><%=previousBookings[i].totPrice%></b></td>
+                  <td><b><%=previousBookings[i].status%></b></td>
                 </tr>
            
              
     </div>
 <%} %>
 </table>
-
 </div>
  <% }%>
 <br><br>

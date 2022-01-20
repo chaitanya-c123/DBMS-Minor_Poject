@@ -61,9 +61,11 @@ const vehicleSchema={
     carYear:String,
     carNo:String,
     carTrans:String,
-    carRate:Number
+    carRate:Number,
+    image:String
 };
 const userDetailSchema=new mongoose.Schema({
+    bookingNumber:String,
     userEmail:String,
     userName:String,
     userAddress:String,
@@ -161,6 +163,30 @@ app.post('/upload',upload,function(req,res,next){
 }
 setTimeout(myfun,2000);
 });
+app.post("/add",upload,function(req,res){
+    const vehicle=new Vehicle({
+        modelName:req.body.modelName,
+        carYear:req.body.carYear,
+        carNo:req.body.carNo,
+        carTrans:req.body.carTrans,
+        carRate:req.body.carRate,
+        image:req.file.filename
+
+    });
+    const availvehicle=new AvailVehicle({
+        modelName:req.body.modelName,
+        carYear:req.body.carYear,
+        carNo:req.body.carNo,
+        carTrans:req.body.carTrans,
+        carRate:req.body.carRate,
+        image:req.file.filename
+    });
+    availvehicle.save();
+   
+    vehicle.save();
+   // available.save();
+    res.redirect("/home");
+});
 app.get("/registerc",function(req,res){
     res.render("registerc");
 });
@@ -197,6 +223,26 @@ app.post("/login",function(req,res){
                if(foundUser.password===password){
                    req.session.isAuth=true;
                    res.redirect("/home");
+               }
+               
+           }
+       }
+   })
+
+});
+app.post("/loginc",function(req,res){
+    const username=req.body.username;
+    const password=md5(req.body.password);
+  console.log('hello');
+   Userc.findOne({username:username},function(err,foundUser){
+       if(err){
+           console.log(err);
+       }else{
+           if(foundUser){
+               if(foundUser.password===password){
+                   req.session.isAuth=true;
+                   var link=`/customer/${username}`;
+                   res.redirect(link);
                }
                
            }
@@ -253,19 +299,19 @@ app.get("/home",isAuth,function(req,res){
 
 })
 let defcontent="Select your car";
-app.get("/customer",function(req,res){
-    
-    if(req.isAuthenticated())
-    {
-        
-        currentUser=req.user.username;
+app.get("/customer/:username",function(req,res){
+   
+        if(req.isAuthenticated){
+        currentUser=req.params.username;
         console.log(currentUser);
         AvailVehicle.find({},function(err,availVehicleList){
             UserDetail.find({userEmail:currentUser},function(err,previousBook){
-                Userc.findOne({username:currentUser},function(err,userProfile){
+                Userc.find({username:currentUser},function(err,userProfile){
+                    console.log(userProfile.image);
+                    console.log(userProfile);
             if(availVehicleList.length>=0)
             {
-                res.render("customer",{newListItems:availVehicleList,user:currentUser,image:userProfile.image,previousBookings:previousBook});
+                res.render("customer",{newListItems:availVehicleList,user:currentUser,images:userProfile.image,previousBookings:previousBook});
 
             }
             if(err)
@@ -278,8 +324,7 @@ app.get("/customer",function(req,res){
         });
         });
         });
-    }
-    else{
+    }else{
         res.redirect("/loginc");
     }
     });
@@ -319,27 +364,7 @@ app.get("/add",isAuth,function(req,res){
     res.render("add");
     }
 });
-app.post("/add",function(req,res){
-    const vehDetails={
-        modelName:req.body.modelName,
-        carYear:req.body.carYear,
-        carNo:req.body.carNo,
-        carTrans:req.body.carTrans,
-        carRate:req.body.carRate
 
-    };
-    const vehicle=new Vehicle({
-        modelName:vehDetails.modelName,
-        carYear:vehDetails.carYear,
-        carNo:vehDetails.carNo,
-        carTrans:vehDetails.carTrans,
-        carRate:vehDetails.carRate
-    });
-   
-    vehicle.save();
-   // available.save();
-    res.redirect("/home");
-});
 app.post("/addPage",function(req,res){
     res.redirect("/add");
 });
@@ -385,21 +410,21 @@ app.post("/addTo",function(req,res){
 
 app.post("/click",function(req,res){
  
+    if(req.isAuthenticated())
+    {
+        
     console.log("click");
     const vehicleId=req.body.click;
-    const email=req.body.user;
     var arrDate=req.body.arrdate;
     var retDate=req.body.retdate;
     let userdetail;
-    if(req.isAuthenticated())
-    {
         var arrDate=req.body.arrdate;
         var retDate=req.body.retdate;
         
         console.log(req.user.phoneNumber);
         const cur=req.user.username;
 
-        Userc.findOne({username:email},function(err,user){
+        Userc.findOne({username:cur},function(err,user){
             console.log(user);
             if(!err){
                 userdetail=user.name;
@@ -433,6 +458,7 @@ app.post("/click",function(req,res){
             price=book.carRate*no_of_days;
 
             let newUser=new UserDetail({
+                bookingNumber:Date.now(),
                 userEmail:user.username,
                 userName:user.name,
                 userAddress:user.address,
@@ -499,43 +525,59 @@ app.post("/click",function(req,res){
     }
 
 });
-
-
-
 app.post("/registerc",function(req,res){
 
-    Userc.register({username:req.body.username,name:req.body.name,address:req.body.address,phoneNumber:req.body.pno,image:" "},req.body.password,function(err,user){
-        if(err){
-            console.log(err);
-            res.redirect("/registerc");
-        }else {
-            passport.authenticate("local")(req,res,function(){
-                res.redirect("/customer");
-            });
-        }
-    
+    const newUser=new Userc({
+    username:req.body.username,
+    password:md5(req.body.password),
+    name:req.body.name,
+    address:req.body.address,
+    phoneNumber:req.body.pno,
+    image:" "
+  
     });
+    newUser.save();
     
-    });
-    
-  app.post("/loginc",function(req,res){
+    res.redirect("/loginc");
+  });
 
-    const userc=new Userc({
-        username:req.body.username,
-        password:req.body.password
-    });
 
-    req.logIn(userc,function(err){
-        if(err){
-            console.log(err);
-        }else{
-            passport.authenticate("local")(req,res,function(){
-                res.redirect("/customer");
-                //return userc;
-            })
-        }
-    })
-});
+// app.post("/registerc",function(req,res){
+
+//     Userc.register({username:req.body.username,name:req.body.name,address:req.body.address,phoneNumber:req.body.pno,image:" "},req.body.password,function(err,user){
+//         if(err){
+//             console.log(err);
+//             res.redirect("/registerc");
+//         }else {
+//             passport.authenticate("local")(req,res,function(){
+//                 res.redirect("/customer");
+//             });
+//         }
+    
+//     });
+    
+//     });
+    
+//   app.post("/loginc",function(req,res){
+
+//     const userc=new Userc({
+//         username:req.body.username,
+//         password:req.body.password
+//     });
+
+//     req.logIn(userc,function(err){
+//         if(err){
+//             console.log(err);
+           
+//         }else{
+//             passport.authenticate("local")(req,res,function(){
+            
+//                 res.redirect("/customer");
+//                 //return userc;
+//             })
+//         }
+//     })
+// });
 
 app.get("/users",isAuth,function(req,res){
     if(req.isAuthenticated){
@@ -753,34 +795,65 @@ app.post("/statusDeny",function(req,res){
  });
   app.post("/addBack",function(req,res){
  
-     let vehiclenum=req.body.number;
-     Vehicle.findOne({carNo:vehiclenum},function(err,avl){
+     let vehicleId=req.body.number;
+     UserDetail.findOne({_id:vehicleId},function(err,doc){
+     Vehicle.findOne({carNo:doc.carNumber},function(err,avl){
          if(!err){
-             AvailVehicle.exists({carNo:avl.carNo},function(err,doc){
+             AvailVehicle.exists({carNo:doc.carNumber},function(err,doc1){
               if(!err){
-                 if(!doc)
+                 if(!doc1)
                 {
                         const availvehicle1=new AvailVehicle({
                             modelName:avl.modelName,
                             carYear:avl.carYear,
                             carNo:avl.carNo,
                             carTrans:avl.carTrans,
-                            carRate:avl.carRate 
+                            carRate:avl.carRate,
+                            image:avl.image
                         });
                     availvehicle1.save();
                  }
              }
              });
-         }
+             var ve=doc.modelName;
+             var cno=doc.carNumber;
+             var price=doc.totPrice;
+
+             var transport=nodemailer.createTransport(
+                {
+                    service: 'gmail',
+                       auth: {
+                        user: 'sravanthvasuki@gmail.com',
+                         pass: 'sravan303560'
+                       }
+                }
+            )
+            
+            var mailOptions={
+                from:'sravanthvasuki@gmail.com',
+                to:doc.userEmail,
+                subject:'VBC RENTALS',
+                text:`Your ride is completed.Selected vehicle name : ${ve}. Selected Vehicle number is ${cno}, Total Price to be paid : ${price} `
+            }
+            transport.sendMail(mailOptions,function(error,info){
+                if(error){
+                    console.log(error)
+                } else{
+                    console.log('email sent'+info.response);
+                }
+            });
+            BookedVehicle.deleteOne({carNo:doc.carNumber},function(err){
+                if(!err){
+                    console.log("Deleted from booked vehicles");
+                }
+                else{
+                    console.log(err);
+                }
+            });
+        }
          });
-             BookedVehicle.deleteOne({carNo:vehiclenum},function(err){
-                 if(!err){
-                     console.log("Deleted from booked vehicles");
-                 }
-                 else{
-                     console.log(err);
-                 }
-             });
+        });
+             
      res.redirect("/users");
      
   });
@@ -824,6 +897,3 @@ app.post("/back",function(req,res){
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
 })
-
-
-
