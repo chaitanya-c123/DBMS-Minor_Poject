@@ -135,6 +135,9 @@ width:100%;
   box-shadow: 2px 2px 5px #555;
   background-color: #ddd;
 }
+.main input{
+  margin-left: 32px;
+}
 
 .backImg{
   min-height:63vh;

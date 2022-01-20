@@ -113,6 +113,13 @@ const isAuth=(req,res,next)=>{
         res.redirect("/login");
     }
 }
+const isAuthc=(req,res,next)=>{
+    if(req.session.isAuth){
+        next()
+    }else{
+        res.redirect("/loginc");
+    }
+}
 app.get("/loginhome",function(req,res){
     res.render("loginhome");
 });
@@ -299,9 +306,10 @@ app.get("/home",isAuth,function(req,res){
 
 })
 let defcontent="Select your car";
-app.get("/customer/:username",function(req,res){
+app.get("/customer/:username",isAuthc,function(req,res){
    
-        if(req.isAuthenticated){
+    if(req.isAuthenticated)
+    {
         currentUser=req.params.username;
         console.log(currentUser);
         AvailVehicle.find({},function(err,availVehicleList){
@@ -323,8 +331,13 @@ app.get("/customer/:username",function(req,res){
             }
         });
         });
-        });
-    }else{
+        
+    });
+    }
+      
+        
+    
+    else{
         res.redirect("/loginc");
     }
     });
@@ -651,12 +664,7 @@ app.post("/editProfile",function(req,res){
 setTimeout(myFun,2000);
 });
 
-app.get("/logout",function(req,res){
-    console.log(req.user.email);
-    req.logout();
-    
-    res.redirect("/loginc");
-});
+
 app.post("/query",function(req,res){
     const newquery=new Query({
         username:req.body.query,
@@ -877,10 +885,10 @@ app.get("/users",function(req,res){
 
 
 app.post("/logout",function(req,res){
-    // console.log(req.user.email);
-     req.logout();
-     
-     res.redirect("/loginc");
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/loginc");
+    })
  })
 
 app.post("/logouta",(req,res) =>{
