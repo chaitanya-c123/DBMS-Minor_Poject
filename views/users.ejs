@@ -43,6 +43,7 @@
               <th scope="col">Arrival Date</th>
               <th scope="col">Return Date</th>
               <th scope="col">Total Price</th>
+              <th scope="col">image</th>
               <th scope="col">Accept</th>
               <th scope="col">Deny</th>
               <th scope="col">Ride Done</th>
@@ -70,7 +71,8 @@
                         <td><b><%=newListItems[i].arrivalDate%></b></td>
                         <td><b><%=newListItems[i].returnDate%></b></td>
                         <td><b><%=newListItems[i].totPrice%></b></td>
-                        
+                        <td><b><a href="image/<%=newListItems[i].image%>">Identity</a></b></td>
+
                        <% if(newListItems[i].status==="Pending"){%>
                         <td><form action="/statusAccept" method="post"><button name="accept" class="btn btn-secondary" value="<%=newListItems[i]._id%>"><b>Accept</b></button></form></td>
                         <td><form action="/statusDeny" method="post"><button name="deny"class="btn-red" value="<%=newListItems[i]._id%>"><b>Deny</b></button></form></td>

@@ -49,11 +49,12 @@ const usercSchema= new mongoose.Schema({
     name:String,
     address:String,
    phoneNumber:String,
-   image:String
+   image:String,
+   imagei:String
 
 });
 
-usercSchema.plugin(passsportLocalMongoose);
+//usercSchema.plugin(passsportLocalMongoose);
 
 
 const vehicleSchema={
@@ -62,7 +63,9 @@ const vehicleSchema={
     carNo:String,
     carTrans:String,
     carRate:Number,
-    image:String
+
+    avail:Number
+
 };
 const userDetailSchema=new mongoose.Schema({
     bookingNumber:String,
@@ -72,6 +75,7 @@ const userDetailSchema=new mongoose.Schema({
     userPhonenumber:String,
     modelName:String,
     carNumber:String,
+    image:String,
 
     arrivalDate:String,
     returnDate:String,
@@ -106,12 +110,18 @@ passport.deserializeUser(Userc.deserializeUser());
 
 
 
-
 const isAuth=(req,res,next)=>{
     if(req.session.isAuth){
         next()
     }else{
         res.redirect("/login");
+    }
+}
+const isAuthc=(req,res,next)=>{
+    if(req.session.isAuth){
+        next()
+    }else{
+        res.redirect("/loginc");
     }
 }
 app.get("/loginhome",function(req,res){
@@ -143,6 +153,16 @@ var profileStorage=multer.diskStorage({
 var profileUpload=multer({
     storage:profileStorage
 }).single('file');
+var Storagei= multer.diskStorage({
+    destination:"./public/uploadi/",
+    filename:(req,file1,cb)=>{
+        cb(null,file1.fieldname+"_"+Date.now()+path.extname(file1.originalname));
+    }
+  });
+var uploadi=multer({
+    storage:Storagei
+}).single('filei');
+
 var upload=multer({
     storage:Storage
 }).single('file');
@@ -173,6 +193,7 @@ app.post('/upload',profileUpload,function(req,res,next){
 }
 setTimeout(myfun,2000);
 });
+
 app.post("/add",upload,function(req,res){
     const vehicle=new Vehicle({
         modelName:req.body.modelName,
@@ -233,8 +254,12 @@ app.post("/login",function(req,res){
                if(foundUser.password===password){
                    req.session.isAuth=true;
                    res.redirect("/home");
+               }else{
+                   res.render("login",{error:"Incorrect password"});
                }
                
+           }else{
+               res.render("login",{error:"Incorrect username"});
            }
        }
    })
@@ -253,9 +278,14 @@ app.post("/loginc",function(req,res){
                    req.session.isAuth=true;
                    var link=`/customer/${username}`;
                    res.redirect(link);
+               }else{
+                  res.render("loginc",{error:"Incorrect password"});
                }
                
+           }else{
+               res.render("loginc",{error:"Incorrect username"});
            }
+           
        }
    })
 
@@ -308,10 +338,15 @@ app.get("/home",isAuth,function(req,res){
             console.log("Successfully shown");
         }
     });
-
 });
-app.get("/customer/:username",function(req,res){
+
+
+
+let defcontent="Select your car";
+app.get("/customer/:username",isAuthc,function(req,res){
    
+    if(req.isAuthenticated)
+    {
         currentUser=req.params.username;
         console.log(currentUser);
         AvailVehicle.find({},function(err,availVehicleList){
@@ -321,6 +356,7 @@ app.get("/customer/:username",function(req,res){
             if(availVehicleList.length>=0)
             {
                 res.render("customer",{newListItems:availVehicleList,userdetail:userprofile,user:currentUser,previousBookings:previousBook});
+
 
             }
             if(err)
@@ -333,9 +369,21 @@ app.get("/customer/:username",function(req,res){
         });
         });
     });
+    }
+     
+      
+
+
+    
+    else{
+        res.redirect("/loginc");
+    }
+
     });
 
 
+
+  
 
     app.get("/booked",isAuth,function(req,res){
         if(req.isAuthenticated)
@@ -414,8 +462,9 @@ app.post("/addTo",function(req,res){
     res.redirect("/home");
 });
 
+
 app.post("/click/:user",function(req,res){
- 
+
     console.log("click");
     const vehicleId=req.body.click;
         var arrDate=req.body.arrdate;
@@ -423,9 +472,11 @@ app.post("/click/:user",function(req,res){
         const cur=req.params.user;
 
         Userc.findOne({username:cur},function(err,user){
-            console.log(user);
+           // console.log(user);
             if(!err){
+
               var  userdetail=user.name;
+
             AvailVehicle.findById(vehicleId,function(err,book){
                 if(!err){
                     var ve=book.modelName;
@@ -435,7 +486,8 @@ app.post("/click/:user",function(req,res){
                 carYear:book.carYear,
                 carNo:book.carNo,
                 carTrans:book.carTrans,
-                carRate:book.carRate
+                carRate:book.carRate,
+                avail:retDate
         
             });
         var price;
@@ -464,6 +516,7 @@ app.post("/click/:user",function(req,res){
                 userPhonenumber:user.phoneNumber,
                 modelName:book.modelName,
                 carNumber:book.carNo,
+                image:user.imagei,
                 status:"Pending",
                 arrivalDate:arrDate,
                 returnDate:retDate,
@@ -480,14 +533,14 @@ app.post("/click/:user",function(req,res){
                     {
                         service: 'gmail',
                            auth: {
-                            user: 'sravanthvasuki@gmail.com',
-                             pass: 'sravan303560'
+                            user: 'vasbhach@gmail.com',
+                             pass: '303560db'
                            }
                     }
                 )
                 
                 var mailOptions={
-                    from:'sravanthvasuki@gmail.com',
+                    from:'vasbhach@gmail.com@gmail.com',
                     to:cur,
                     subject:'VBC RENTALS',
                     text:`Thank you for choosing VBC rentals. You have selected ${ve}.Vehicle number is ${cn0} `
@@ -508,6 +561,7 @@ app.post("/click/:user",function(req,res){
             });
                       AvailVehicle.findByIdAndRemove(vehicleId,function(err){
                 if(!err){
+                   // console.log(veh.avail);
                     console.log("successfully deleted");
                     res.redirect(`/customer/${cur}`);
                 }
@@ -519,15 +573,20 @@ app.post("/click/:user",function(req,res){
         });
 
 });
-app.post("/registerc",function(req,res){
+app.post("/registerc",uploadi,function(req,res){
 
+    
     const newUser=new Userc({
     username:req.body.username,
     password:md5(req.body.password),
     name:req.body.name,
     address:req.body.address,
     phoneNumber:req.body.pno,
-    image:"NoImage"
+
+    image:"NoImage",
+
+    imagei:req.file.filename 
+
   
     });
     newUser.save();
@@ -535,10 +594,41 @@ app.post("/registerc",function(req,res){
     res.redirect("/loginc");
   });
 
+app.get("/image/:imagedetail",function(req,res){
+    res.render("image",{image:req.params.imagedetail});
+});
 
+app.post("/loginc",function(req,res){
+    const username=req.body.username;
+    const password=md5(req.body.password);
+ 
+   Userc.findOne({username:username},function(err,foundUser){
+    console.log('hello');
+       if(err){
+           console.log(err);
+       }else{
+           if(foundUser){
+               if(foundUser.password===password){
+                   req.session.isAuth=true;
+                   console.log('hel');
+                   var link=`/customer/${username}`;
+                   res.redirect(link);
+               }
+               else{
+                   res.render("loginc",{error:"incorrect password"});
+               }
+               
+           }
+           else{
+               res.render("loginc",{error:"incorrect username"});
+           }
+       }
+   })
+
+});
 app.get("/users",isAuth,function(req,res){
-    if(req.isAuthenticated){
-    
+    if(req.isAuthenticated)
+    {
         UserDetail.find({},function(err,bookedDetails){
             if(availVehicleList.length>=0)
             {
@@ -615,6 +705,7 @@ app.get("/logout",function(req,res){
     res.redirect("/loginc");
 });
 app.post("/query/:user",function(req,res){
+
     const newquery=new Query({
         username:req.body.query,
         queryContent:req.body.queryBody,
@@ -817,17 +908,23 @@ app.post("/statusDeny",function(req,res){
  
 
 const userDetails1=[];
-app.get("/users",function(req,res){
-    UserDetail.find({},function(err,userDetails1){
-          if(userDetails1.length>0)
-          {
-              res.render("users",{newListItems:userDetails1});
-          }
-          if(err){
-              console.log(err);
-          }
-    })
-    res.render("users",{newListItems:userDetails1});
+app.get("/users",isAuth,function(req,res){
+    if(req.isAuthenticated)
+    {
+
+        UserDetail.find({},function(err,userDetails1){
+            if(userDetails1.length>0)
+            {
+                res.render("users",{newListItems:userDetails1});
+            }
+            if(err){
+                console.log(err);
+            }
+      })
+      res.render("users",{newListItems:userDetails1});
+
+    }
+    
 });
 
 app.post("/userSearch",function(req,res){
@@ -850,23 +947,23 @@ app.post("/userSearch",function(req,res){
 
 
 app.post("/logout",function(req,res){
-    // console.log(req.user.email);
-     req.logout();
-     
-     res.redirect("/loginc");
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        res.redirect("/loginc");
+    })
  })
 
 app.post("/logouta",(req,res) =>{
     req.session.destroy((err)=>{
         if(err) throw err;
         res.redirect("/login");
-    })
-})
+    });
+});
 
 
 app.post("/back/:page",function(req,res){
     res.redirect(`/${req.params.page}`);
-})
+});
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");
-})
+});

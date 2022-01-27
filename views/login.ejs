@@ -5,14 +5,18 @@
 </head>
 <body>
 <div class="body">
-
-
+ 
+  
   <div class="container">
     <div class="header">
-         <h1>Admin Login</h1>
+         <h1>Admin Login</h1>     
        </div>
+       <% var error; %>
     <div class="main">
      <form action="/login" method="POST">
+       <span style="color: red;">
+         <%=error%>
+       </span>
       <span>
         <label><b>Username</b></label>
         <input type="string" class="form-control" id="email" name="username">
@@ -20,6 +24,7 @@
       <span>
         <label><b>Password</b></label>
         <input type="password" class="form-control" id="password" name="password">
+
       </span><br>
       <button type="submit" class="btn btn-dark">Login</button>
      </form>

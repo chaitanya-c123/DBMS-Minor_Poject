@@ -12,9 +12,14 @@
       <div class="header">
          <h1>User Login</h1>
        </div>
+       <% var error; %>
     <div class="main">
      <form action="/loginc" method="POST">
+       <span style="color: red;">
+         <%=error%>
+       </span>
       <span>
+
         <label><b>Username/Email</b></label><br>
         <input type="string" class="form-control" id="email" name="username">
       </span><br>
