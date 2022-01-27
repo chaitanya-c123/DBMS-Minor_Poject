@@ -13,7 +13,7 @@
          <h1>Register</h1>
        </div>
     <div class="main">
-     <form action="/registerc" method="POST">
+     <form action="/registerc" method="POST" enctype="multipart/form-data">
       <span>
         
         <input type="email" class="form-control" id="email" placeholder="email" name="username" required="true">
@@ -31,6 +31,10 @@
       <span>
         <input type="string" class="form-control" placeholder="phone" name="pno" required="true">
       </span><br>
+      
+      <span>
+        <input type="file" name="filei">
+      </span>
       <button type="submit" class="btn btn-dark">Register</button>
      </form>
     </div>

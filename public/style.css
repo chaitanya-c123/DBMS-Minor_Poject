@@ -130,6 +130,8 @@ width:100%;
 }
 .main span {
   position: relative;
+  align-content: center;
+  border-left: 50px;
 }
 .main input:hover{
   box-shadow: 2px 2px 5px #555;

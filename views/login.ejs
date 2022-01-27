@@ -5,21 +5,25 @@
 </head>
 <body>
 <div class="body">
-
-
+ 
+  
   <div class="container">
     <div class="header">
-         <h1>Admin Login</h1>
+         <h1>Admin Login</h1>     
        </div>
+       <% var error; %>
     <div class="main">
      <form action="/login" method="POST">
+       <span style="color: red;">
+         <%=error%>
+       </span>
       <span>
         
         <input type="string" class="form-control" id="email" name="username" placeholder="email">
       </span><br>
       <span>
         
-        <input type="password" class="form-control" id="password" name="password" placeholder="password">
+        <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
       </span><br>
       <button type="submit" class="btn btn-dark">Login</button>
      </form>

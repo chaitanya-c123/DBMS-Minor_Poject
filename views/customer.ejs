@@ -37,9 +37,9 @@
           <div class="dropdown">
                <div class="navbar-brand">
                 <%if(images!=" "){%>
-                  <img id="myBtn" class="dropbtn" src="/upload/<%=images%>">
+                  <img id="myBtn" class="dropbtn" src="/public/upload/<%=images%>">
                   <%}else{%>
-                <img id="myBtn" class="dropbtn" src="/images/profile.png">
+                <img id="myBtn" class="dropbtn" src="/public/images/profile.png">
                   <%}%>
                 </div>  
               <div id="myDropdown" class="dropdown-content">
@@ -64,7 +64,7 @@
       </div>
       <br><br>
       <div class="container">
-        <form action="/click" method="post">
+        <form action="/click/<%=user%>" method="post">
         <div class="box border" id="heading">
           <br>
           <h1 class="text-center heading">VEHICLES AVAILABLE</h1>
