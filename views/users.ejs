@@ -1,20 +1,39 @@
 <%- include('partials/header') %>
 <br><br>
    
-      <form action="/back" method="post">
+      <form action="/back/home" method="post">
         <div class="text-left ">
           <button type="submit" name="signout"  class="signout btn btn-success"><b><--BACK</b></button></div>
         </form>  
         <br>
         <div class="container">
       <h1 class="heading border">USER DETAILS</h1>
-      <br>
+
+      <form action="/userSearch" method="post">
+      <div class="row mt-5">
+        <div class="col-md-5 mx-auto">
+            <div><b>Find User</b></div>
+            <div class="input-group">
+              
+                <input class="form-control border-end-0 border" type="string" name="search"  placeholder="Enter Username">
+                <span class="input-group-append">
+                  <button class="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+                </span>
+              
+            </div>
+        </div>
+    </div>
+  </form>
+        <br><br>
       <div class="box ">
          <div>
           <table class="table table-hover">
           <thead class="table-head">
              <tr>
               <th scope="col">#</th>
+              <th scope="col">Profile Image</th>
               <th scope="col">Email/th>
               <th scope="col">Name</th>
               <th scope="col">Adress</th>
@@ -26,6 +45,8 @@
               <th scope="col">Total Price</th>
               <th scope="col">Accept</th>
               <th scope="col">Deny</th>
+              <th scope="col">Ride Done</th>
+
               <!-- <th scope="col">Add To vehicle list</th> -->
 
             </tr>
@@ -35,6 +56,11 @@
                     <tbody>
                       <tr>
                         <th scope="row "><%=i+1%></th>
+                        <%if(newListItems[i].Profileimage!="NoImage"){%>
+                          <td><b><a href="image/<%=newListItems[i].Profileimage%>">Load Image</a></b></td>
+                          <%}else{%>
+                            <td><b>No Image</b></td>
+                          <%}%>
                         <td><b><%=newListItems[i].userEmail%></b></td>
                         <td><b><%=newListItems[i].userName%></b></td>
                         <td><b><%=newListItems[i].userAddress%></b></td>
@@ -44,20 +70,25 @@
                         <td><b><%=newListItems[i].arrivalDate%></b></td>
                         <td><b><%=newListItems[i].returnDate%></b></td>
                         <td><b><%=newListItems[i].totPrice%></b></td>
+                        
                        <% if(newListItems[i].status==="Pending"){%>
                         <td><form action="/statusAccept" method="post"><button name="accept" class="btn btn-secondary" value="<%=newListItems[i]._id%>"><b>Accept</b></button></form></td>
                         <td><form action="/statusDeny" method="post"><button name="deny"class="btn-red" value="<%=newListItems[i]._id%>"><b>Deny</b></button></form></td>
+                        
+                        
                         <%}%>
                         <%if(newListItems[i].status==="Accepted"){%>
                           <td><form action="/statusAccept" method="post"><button class="btn btn-secondary" name="accept" value="<%=newListItems[i]._id%>"><b>Accepted</b></button></form></td>
                           <td><p></p></td>
+                          <td><form action="/addBack" method="post"><button name="number" class="btn btn-info" value="<%=newListItems[i]._id%>"><b>Ride done</b></button></form></td> 
+                          
                         <%}%>
                         <%if(newListItems[i].status==="Denied"){%>
                           <td><p></p></td>
                           <td><form action="/statusDeny" method="post"><button name="deny" class="btn-red" value="<%=newListItems[i]._id%>"><b>Denied</b></button></form></td>
-                        <%}%>
-                       <td><form action="/addBack" method="post"><button name="number" class="btn btn-info" value="<%=newListItems[i]._id%>"><b>Ride done</b></button></form></td> 
-                      </tr>
+                          <td><p></p></td>
+                          <%}%> 
+                        </tr>
                   </div>
      <%} %>
     </table>

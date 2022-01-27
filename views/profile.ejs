@@ -24,7 +24,7 @@
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/customer">User login</a>
+          <a class="nav-link" href="/customer/<%=userdetail.username%>">User login</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/registerc">Register</a>
@@ -34,8 +34,8 @@
         </li>
         <li class="nav-item">
             <div class="navbar-brand">
-                <%if(userdetail.image!=" "){%>
-                  <img id="myBtn" class="dropbtn" src="/upload/<%=userdetail.image%>">
+                <%if(userdetail.image!="NoImage"){%>
+                  <img id="myBtn" class="dropbtn" src="/profileUpload/<%=userdetail.image%>">
                   <%}else{%>
                 <img id="myBtn" class="dropbtn" src="/images/profile.png">
                   <%}%>
@@ -50,8 +50,8 @@
         <div class="row">
             <div class="col-4" >
                 <div id="profileImg">
-                <%if(userdetail.image!=" "){%>
-                    <img class="profileImg" src="/upload/<%=userdetail.image%>">
+                <%if(userdetail.image!="NoImage"){%>
+                    <img class="profileImg" src="/profileUpload/<%=userdetail.image%>">
                     <%}else{%>
                         <img class="profileImg" src="/images/profile.png">
                     <%}%>
@@ -84,7 +84,6 @@
     </div>
     <br><br>
     <div class="container">
-   
        
         <h3 style="color:brown">Your Previous Bookings</h3>
         <br>

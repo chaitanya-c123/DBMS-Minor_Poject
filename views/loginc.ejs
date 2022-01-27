@@ -4,22 +4,22 @@
   <link rel="stylesheet" type="text/css" href="styleform.css">
 </head>
 <body>
-<div class="body">
+<div class="body container-fluid">
 
 
   <div class="container">
 
       <div class="header">
-         <h1>Customer Login</h1>
+         <h1>User Login</h1>
        </div>
     <div class="main">
      <form action="/loginc" method="POST">
       <span>
-        
+        <label><b>Username/Email</b></label><br>
         <input type="string" class="form-control" id="email" name="username">
       </span><br>
       <span>
-        
+        <label><b>Password<br></b></label>
         <input type="password" class="form-control" id="password" name="password">
       </span><br>
       <button type="submit" class="btn btn-dark">Login</button>

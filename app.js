@@ -76,7 +76,8 @@ const userDetailSchema=new mongoose.Schema({
     arrivalDate:String,
     returnDate:String,
     status:String,
-    totPrice:Number
+    totPrice:Number,
+    Profileimage:String
 });
 const reviewSchema=new mongoose.Schema({
     username:String,
@@ -133,10 +134,19 @@ var Storage= multer.diskStorage({
       cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname));
   }
 });
+var profileStorage=multer.diskStorage({
+    destination:"./public/profileUpload/",
+    filename:(req,file,cb)=>{
+        cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname));
+    }
+});
+var profileUpload=multer({
+    storage:profileStorage
+}).single('file');
 var upload=multer({
     storage:Storage
 }).single('file');
-app.post('/upload',upload,function(req,res,next){
+app.post('/upload',profileUpload,function(req,res,next){
     var imageFile=req.file.filename;
     const update={
         image:imageFile
@@ -234,7 +244,7 @@ app.post("/loginc",function(req,res){
     const username=req.body.username;
     const password=md5(req.body.password);
   console.log('hello');
-   Userc.findOne({username:username},function(err,foundUser){
+   Userc.findOne({username:username},function(err,foundUser){6
        if(err){
            console.log(err);
        }else{
@@ -251,7 +261,9 @@ app.post("/loginc",function(req,res){
 
 });
 
-
+app.get("/image/:imageDetail",function(req,res){
+    res.render("image",{image:req.params.imageDetail});
+});
 app.get("/map",function(req,res){
     res.render("map");
 })
@@ -297,21 +309,18 @@ app.get("/home",isAuth,function(req,res){
         }
     });
 
-})
-let defcontent="Select your car";
+});
 app.get("/customer/:username",function(req,res){
    
-        if(req.isAuthenticated){
         currentUser=req.params.username;
         console.log(currentUser);
         AvailVehicle.find({},function(err,availVehicleList){
             UserDetail.find({userEmail:currentUser},function(err,previousBook){
-                Userc.find({username:currentUser},function(err,userProfile){
-                    console.log(userProfile.image);
-                    console.log(userProfile);
+                Userc.findOne({username:currentUser},function(err,userprofile){
+                   
             if(availVehicleList.length>=0)
             {
-                res.render("customer",{newListItems:availVehicleList,user:currentUser,images:userProfile.image,previousBookings:previousBook});
+                res.render("customer",{newListItems:availVehicleList,userdetail:userprofile,user:currentUser,previousBookings:previousBook});
 
             }
             if(err)
@@ -323,10 +332,7 @@ app.get("/customer/:username",function(req,res){
             }
         });
         });
-        });
-    }else{
-        res.redirect("/loginc");
-    }
+    });
     });
 
 
@@ -408,26 +414,18 @@ app.post("/addTo",function(req,res){
     res.redirect("/home");
 });
 
-app.post("/click",function(req,res){
+app.post("/click/:user",function(req,res){
  
-    if(req.isAuthenticated())
-    {
-        
     console.log("click");
     const vehicleId=req.body.click;
-    var arrDate=req.body.arrdate;
-    var retDate=req.body.retdate;
-    let userdetail;
         var arrDate=req.body.arrdate;
         var retDate=req.body.retdate;
-        
-        console.log(req.user.phoneNumber);
-        const cur=req.user.username;
+        const cur=req.params.user;
 
         Userc.findOne({username:cur},function(err,user){
             console.log(user);
             if(!err){
-                userdetail=user.name;
+              var  userdetail=user.name;
             AvailVehicle.findById(vehicleId,function(err,book){
                 if(!err){
                     var ve=book.modelName;
@@ -455,6 +453,7 @@ app.post("/click",function(req,res){
                 retdat+=(retmon-arrmon)*30;
             }
             no_of_days=retdat-arrdat;
+            console.log(no_of_days);
             price=book.carRate*no_of_days;
 
             let newUser=new UserDetail({
@@ -468,7 +467,8 @@ app.post("/click",function(req,res){
                 status:"Pending",
                 arrivalDate:arrDate,
                 returnDate:retDate,
-                totPrice:price
+                totPrice:price,
+                Profileimage:user.image
             });
             
             bookvehicle.save();
@@ -509,7 +509,7 @@ app.post("/click",function(req,res){
                       AvailVehicle.findByIdAndRemove(vehicleId,function(err){
                 if(!err){
                     console.log("successfully deleted");
-                    res.redirect("/customer");
+                    res.redirect(`/customer/${cur}`);
                 }
                 else{
                     console.log(err);
@@ -517,12 +517,6 @@ app.post("/click",function(req,res){
             })
         }
         });
-
-
-    }
-    else{
-        res.redirect('/loginc');
-    }
 
 });
 app.post("/registerc",function(req,res){
@@ -533,7 +527,7 @@ app.post("/registerc",function(req,res){
     name:req.body.name,
     address:req.body.address,
     phoneNumber:req.body.pno,
-    image:" "
+    image:"NoImage"
   
     });
     newUser.save();
@@ -541,43 +535,6 @@ app.post("/registerc",function(req,res){
     res.redirect("/loginc");
   });
 
-
-// app.post("/registerc",function(req,res){
-
-//     Userc.register({username:req.body.username,name:req.body.name,address:req.body.address,phoneNumber:req.body.pno,image:" "},req.body.password,function(err,user){
-//         if(err){
-//             console.log(err);
-//             res.redirect("/registerc");
-//         }else {
-//             passport.authenticate("local")(req,res,function(){
-//                 res.redirect("/customer");
-//             });
-//         }
-    
-//     });
-    
-//     });
-    
-//   app.post("/loginc",function(req,res){
-
-//     const userc=new Userc({
-//         username:req.body.username,
-//         password:req.body.password
-//     });
-
-//     req.logIn(userc,function(err){
-//         if(err){
-//             console.log(err);
-           
-//         }else{
-//             passport.authenticate("local")(req,res,function(){
-            
-//                 res.redirect("/customer");
-//                 //return userc;
-//             })
-//         }
-//     })
-// });
 
 app.get("/users",isAuth,function(req,res){
     if(req.isAuthenticated){
@@ -614,13 +571,13 @@ app.post("/profile",function(req,res){
 app.post("/users",function(req,res){
     res.redirect("/users");
 });
-app.post("/review",function(req,res){
+app.post("/review/:user",function(req,res){
     const newReview=new Review({
         username:req.body.review,
         content:req.body.reviewBody
     });
     newReview.save();
-    res.redirect("/customer");
+    res.redirect(`/customer/${req.params.user}`);
 });
 app.post("/editProfile",function(req,res){
     const update={
@@ -657,14 +614,14 @@ app.get("/logout",function(req,res){
     
     res.redirect("/loginc");
 });
-app.post("/query",function(req,res){
+app.post("/query/:user",function(req,res){
     const newquery=new Query({
         username:req.body.query,
         queryContent:req.body.queryBody,
         reply:""
     });
     newquery.save();
-    res.redirect("/customer");
+    res.redirect(`/customer/${req.params.user}`);
 });
 
 app.get("/queryPage",isAuth,function(req,res){
@@ -873,7 +830,23 @@ app.get("/users",function(req,res){
     res.render("users",{newListItems:userDetails1});
 });
 
-
+app.post("/userSearch",function(req,res){
+    var value=req.body.search;
+    console.log(value);
+    if(value===" "){
+        res.redirect("/users");
+    }
+    let searchDetails=[];
+    UserDetail.find({},function(err,userDetails){
+        userDetails.forEach(function(userDetail){
+            if((userDetail.userEmail).includes(value)===true){
+                searchDetails.push(userDetail);
+            }
+        });
+        console.log(searchDetails);
+        res.render("users",{newListItems:searchDetails});
+    });
+})
 
 
 app.post("/logout",function(req,res){
@@ -891,8 +864,8 @@ app.post("/logouta",(req,res) =>{
 })
 
 
-app.post("/back",function(req,res){
-    res.redirect("/home");
+app.post("/back/:page",function(req,res){
+    res.redirect(`/${req.params.page}`);
 })
 app.listen(3000,function(){
     console.log("Server started on posrt 3000");

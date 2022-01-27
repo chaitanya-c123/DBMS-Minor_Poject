@@ -33,29 +33,25 @@
         <li class="nav-item">
           <a class="nav-link" href="/contact">Contact</a>
         </li>
-        <li class="nav-item">
-          <div class="dropdown">
-               <div class="navbar-brand">
-                <%if(images!=" "){%>
-                  <img id="myBtn" class="dropbtn" src="/upload/<%=images%>">
-                  <%}else{%>
-                <img id="myBtn" class="dropbtn" src="/images/profile.png">
-                  <%}%>
-                </div>  
-              <div id="myDropdown" class="dropdown-content">
-                  <form action="/profile" method="post">
-                      <button class="btn btn-dark" name="profileName" value="<%=user%>">Veiw Profile</button>
-                    </form>
-                    <form action="/logout" method="post">
-                      <button type="submit" name="signout"  class="signout btn btn-dark">Sign Out</button>   
-                     </form>
-              </div>
-          </div>
-        </li> 
-        <li class="nav-item">
-          
-        </li>
-      </ul>
+          <li class="nav-item">
+            <div class="dropdown">
+                <div class="navbar-brand" id="myBtn">
+                        <img class="profileImg" src="/images/profile.png">
+                 </div>  
+                <div id="myDropdown" class="dropdown-content">
+                    <form action="/profile" method="post">
+                        <button class="btn btn-dark" name="profileName" value="<%=user%>">Veiw Profile</button>
+                      </form>
+                      <form action="/logout" method="post">
+                        <button type="submit" name="signout"  class="signout btn btn-dark">Sign Out</button>   
+                       </form>
+                </div>
+            </div>
+          </li>
+          <li class="nav-item">
+
+          </li>
+        </ul>
     </div>
   </div>
 </nav>
@@ -64,11 +60,11 @@
       </div>
       <br><br>
       <div class="container">
-        <form action="/click" method="post">
         <div class="box border" id="heading">
           <br>
           <h1 class="text-center heading">VEHICLES AVAILABLE</h1>
         </div>
+      <form action="/click/<%=user%>" method="post">
       <input type="text" readonly class="form-control-plaintext" id="userId" style="color:white" name="user" value="<%=user%>">
           <div class="form-row">
             <div class="form-group col-md-6">
@@ -151,7 +147,7 @@
  <% }%>
 <br><br>
   <h3 style="color:#4C0027">Share Your experience</h3>
-<form class="text-start" action="/review" method="post">
+<form class="text-start" action="/review/<%=user%>" method="post">
     <div class="form-group">
 <div class="mb-3">
     <label for="" class=""><b>Review</b></label> 
@@ -164,7 +160,7 @@
 <br><br>
 
 <h3 style="color:#4C0027">Post Your Queries</h3>
-<form class="text-start" action="/query" method="post">
+<form class="text-start" action="/query/<%=user%>" method="post">
   <div class="form-group">
 <div class="mb-3">
   <label for="" class=""><b>Query</b></label> 

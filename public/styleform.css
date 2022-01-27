@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;400;600;800&display=swap');
 .body {
-
+margin-top:0px;
  background-image: url(/images/bg.jpg);
+ 
  background-repeat: no-repeat;
  overflow:hidden ;
  background-size: cover;
@@ -12,6 +13,7 @@
   border-radius: 25px;
   background-color: rgba(0,0,0,0.1);
   box-shadow: 0 0 5px #333;
+  padding-left:37px;
 }
 .header{
   text-align: center;
@@ -24,7 +26,7 @@
 
 }
 .main {
-  text-align: center;
+  text-align: left;
 }
 .main input,button {
   width: 300px;
