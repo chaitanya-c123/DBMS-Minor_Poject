@@ -12,22 +12,23 @@
       <div class="header">
          <h1>User Login</h1>
        </div>
-       <% var error; %>
+       <% var error%>
+       
     <div class="main">
+      <span style="color: red;">
+       <h6 style="padding-left: 95px;"> <%=error%></h6>
+      </span>
      <form action="/loginc" method="POST">
-       <span style="color: red;">
-         <%=error%>
-       </span>
+       
       <span>
-
-        <label><b>Username/Email</b></label><br>
+        <label style="padding-left: 30px;"><b>Username/Email</b></label><br>
         <input type="string" class="form-control" id="email" name="username">
       </span><br>
       <span>
-        <label><b>Password<br></b></label>
+        <label style="padding-left: 30px;"><b>Password<br></b></label>
         <input type="password" class="form-control" id="password" name="password">
       </span><br>
-      <button type="submit" class="btn btn-dark">Login</button>
+      <button style="margin-left: 30px;" type="submit" class="btn btn-dark">Login</button>
      </form>
     </div>
   

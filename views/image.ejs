@@ -2,5 +2,10 @@
 <form action="/back/users" method="post">
     <div class="text-left ">
       <button type="submit" name="signout"  class="signout btn btn-success"><b><--BACK</b></button></div>
-</form>  
-<img style="margin:200px;max-height: 500px;max-width: 500px;" src="/profileUpload/<%=image%>">
+</form> 
+<%if(image.includes(".pdf")===true){%> 
+  <embed src="/uploadi/<%=image%>" width="800px" height="2100px" />
+  <%}else{%>
+    <img style="margin:200px;max-height: 500px;max-width: 500px;" src="/profileUpload/<%=image%>">
+  <%}%>
+ 

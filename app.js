@@ -63,8 +63,7 @@ const vehicleSchema={
     carNo:String,
     carTrans:String,
     carRate:Number,
-
-    avail:Number
+    image:String
 
 };
 const userDetailSchema=new mongoose.Schema({
@@ -103,9 +102,6 @@ const BookedVehicle=mongoose.model("BookedVehicle",vehicleSchema);
 const UserDetail=mongoose.model("UserDetail",userDetailSchema);
 const Review=mongoose.model("Review",reviewSchema);
 const Query=mongoose.model("Query",querySchema);
-passport.use(Userc.createStrategy());
-passport.serializeUser(Userc.serializeUser());
-passport.deserializeUser(Userc.deserializeUser());
 
 
 

@@ -71,7 +71,7 @@
                         <td><b><%=newListItems[i].arrivalDate%></b></td>
                         <td><b><%=newListItems[i].returnDate%></b></td>
                         <td><b><%=newListItems[i].totPrice%></b></td>
-                        <td><b><a href="image/<%=newListItems[i].image%>">Identity</a></b></td>
+                        <td><b><a href="image/<%=newListItems[i].imagei%>">Identity</a></b></td>
 
                        <% if(newListItems[i].status==="Pending"){%>
                         <td><form action="/statusAccept" method="post"><button name="accept" class="btn btn-secondary" value="<%=newListItems[i]._id%>"><b>Accept</b></button></form></td>
