@@ -48,9 +48,9 @@ const usercSchema= new mongoose.Schema({
     password:String,
     name:String,
     address:String,
-   phoneNumber:String,
-   image:String,
-   imagei:String
+    phoneNumber:String,
+    image:String,
+    imagei:String
 
 });
 
@@ -75,7 +75,6 @@ const userDetailSchema=new mongoose.Schema({
     modelName:String,
     carNumber:String,
     image:String,
-
     arrivalDate:String,
     returnDate:String,
     status:String,
@@ -225,17 +224,26 @@ app.get("/loginc",function(req,res){
     res.render("loginc");
   });
 
+
 const newUser=new User({
     username:"vasbhach@gmail.com",
     password:md5("303560")
 });
-newUser.save(function(err){
-    if(err){
-        console.log(err);
+User.exists({username:"vasbhach@gmail.com"},function(err,doc){
+if(!err)
+{
+    if(!doc)
+    {
+        newUser.save(function(err){
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log('Success');
+            }
+        });
     }
-    else{
-        console.log('Success');
-    }
+}
 });
 var error=0;
 app.post("/login",function(req,res){
@@ -539,7 +547,8 @@ app.post("/click/:user",function(req,res){
                     from:'vasbhach@gmail.com@gmail.com',
                     to:cur,
                     subject:'VBC RENTALS',
-                    text:`Thank you for choosing VBC rentals. You have selected ${ve}.Vehicle number is ${cn0} `
+                    text:`Hi ${user.name}, Thank you for choosing VBC rentals. Booking Number : ${newUser.bookingNumber}. You have selected ${ve},Vehicle number is ${cn0}. Estimated Price : ${newUser.totPrice} `
+                    
                 }
                 transport.sendMail(mailOptions,function(error,info){
                     if(error){
@@ -772,7 +781,7 @@ app.post("/statusAccept",function(req,res){
             from:'vasbhach@gmail.com',
             to:userInfo.userEmail,
             subject:'VBC RENTALS',
-            text:'Your request got Accepted'
+            text:`Hello ${userInfo.userName}, Your request for ${userInfo.modelName} has been Accepted. For more information about your bookings, please login to our website. You can pickup your desired vehicle on the day of your reservation from our location. Refer the contact page of our website for more details. Thank you`
         }
         transport.sendMail(mailOptions,function(error,info){
             if(error){
@@ -799,7 +808,26 @@ app.post("/statusDeny",function(req,res){
      UserDetail.findOneAndUpdate({_id:userId},update,function(err,userInfo){
          if(!err){
          console.log(userInfo);
-         
+         Vehicle.findOne({carNo:userInfo.carNumber},function(err,avl){
+            if(!err){
+                AvailVehicle.exists({carNo:userInfo.carNumber},function(err,doc1){
+                 if(!err){
+                    if(!doc1)
+                   {
+                           const availvehicle1=new AvailVehicle({
+                               modelName:avl.modelName,
+                               carYear:avl.carYear,
+                               carNo:avl.carNo,
+                               carTrans:avl.carTrans,
+                               carRate:avl.carRate,
+                               image:avl.image
+                           });
+                       availvehicle1.save();
+                    }
+                }
+                });
+            }
+            });
          var transport=nodemailer.createTransport(
             {
                 host: 'smtp.gmail.com',
@@ -818,7 +846,7 @@ app.post("/statusDeny",function(req,res){
             from:'vasbhach@gmail.com',
             to:userInfo.userEmail,
             subject:'VBC RENTALS',
-            text:'Your request got denied'
+            text:`Hello ${userInfo.userName}, Your request for ${userInfo.modelName} has been denied due to some unavoidable reasons. We are sorry for the inconvenience. You are requested to check our website for further bookings. Thank you`
         }
         transport.sendMail(mailOptions,function(error,info){
             if(error){
@@ -877,7 +905,7 @@ app.post("/statusDeny",function(req,res){
                 from:'sravanthvasuki@gmail.com',
                 to:doc.userEmail,
                 subject:'VBC RENTALS',
-                text:`Your ride is completed.Selected vehicle name : ${ve}. Selected Vehicle number is ${cno}, Total Price to be paid : ${price} `
+                text:`Hello ${doc.userName}. Your ride with ${doc.modelName} has been comepelted. Selected vehicle name : ${ve}. Selected Vehicle number is ${cno}, Total Price to be paid : ${price}. Please leave your feedback on our portal. We hope you enjoyed your ride and looking forward for more happy bookings. Thank you`
             }
             transport.sendMail(mailOptions,function(error,info){
                 if(error){
@@ -941,18 +969,17 @@ app.post("/userSearch",function(req,res){
     });
 })
 
-
 app.post("/logout",function(req,res){
     req.session.destroy((err)=>{
         if(err) throw err;
-        res.redirect("/loginc");
+        res.redirect("/");
     })
  })
 
 app.post("/logouta",(req,res) =>{
     req.session.destroy((err)=>{
         if(err) throw err;
-        res.redirect("/login");
+        res.redirect("/");
     });
 });
 

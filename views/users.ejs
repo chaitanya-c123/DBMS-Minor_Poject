@@ -6,7 +6,7 @@
           <button type="submit" name="signout"  class="signout btn btn-success"><b><--BACK</b></button></div>
         </form>  
         <br>
-        <div class="container">
+        <div class="container-fluid">
       <h1 class="heading border">USER DETAILS</h1>
 
       <form action="/userSearch" method="post">
@@ -33,20 +33,22 @@
           <thead class="table-head">
              <tr>
               <th scope="col">#</th>
+              <th scope="col">Booking Number</th>
               <th scope="col">Profile Image</th>
               <th scope="col">Email/th>
               <th scope="col">Name</th>
-              <th scope="col">Adress</th>
               <th scope="col">Phone Number</th>
+             
               <th scope="col">Model Name</th>
               <th scope="col">carNumber</th>
+              
               <th scope="col">Arrival Date</th>
               <th scope="col">Return Date</th>
               <th scope="col">Total Price</th>
               <th scope="col">image</th>
               <th scope="col">Accept</th>
               <th scope="col">Deny</th>
-              <th scope="col">Ride Done</th>
+              <th scope="col">Vehicle Returned</th>
 
               <!-- <th scope="col">Add To vehicle list</th> -->
 
@@ -56,22 +58,26 @@
             <div class="item text-bold">
                     <tbody>
                       <tr>
+                        
                         <th scope="row "><%=i+1%></th>
+                        <td><b><%=newListItems[i].bookingNumber%></b></td>
                         <%if(newListItems[i].Profileimage!="NoImage"){%>
                           <td><b><a href="image/<%=newListItems[i].Profileimage%>">Load Image</a></b></td>
                           <%}else{%>
                             <td><b>No Image</b></td>
                           <%}%>
+                      
                         <td><b><%=newListItems[i].userEmail%></b></td>
                         <td><b><%=newListItems[i].userName%></b></td>
-                        <td><b><%=newListItems[i].userAddress%></b></td>
                         <td><b><%=newListItems[i].userPhonenumber%></b></td>
+                        
                         <td><b><%=newListItems[i].modelName%></b></td>
                         <td><b><%=newListItems[i].carNumber%></b></td>
                         <td><b><%=newListItems[i].arrivalDate%></b></td>
                         <td><b><%=newListItems[i].returnDate%></b></td>
                         <td><b><%=newListItems[i].totPrice%></b></td>
-                        <td><b><a href="image/<%=newListItems[i].imagei%>">Identity</a></b></td>
+                       
+                        <td><b><a href="image/<%=newListItems[i].image%>">Identity</a></b></td>
 
                        <% if(newListItems[i].status==="Pending"){%>
                         <td><form action="/statusAccept" method="post"><button name="accept" class="btn btn-secondary" value="<%=newListItems[i]._id%>"><b>Accept</b></button></form></td>
@@ -80,14 +86,14 @@
                         
                         <%}%>
                         <%if(newListItems[i].status==="Accepted"){%>
-                          <td><form action="/statusAccept" method="post"><button class="btn btn-secondary" name="accept" value="<%=newListItems[i]._id%>"><b>Accepted</b></button></form></td>
+                          <td><p style="color:brown"><b>Accepted</p></b></td>
                           <td><p></p></td>
                           <td><form action="/addBack" method="post"><button name="number" class="btn btn-info" value="<%=newListItems[i]._id%>"><b>Ride done</b></button></form></td> 
                           
                         <%}%>
                         <%if(newListItems[i].status==="Denied"){%>
                           <td><p></p></td>
-                          <td><form action="/statusDeny" method="post"><button name="deny" class="btn-red" value="<%=newListItems[i]._id%>"><b>Denied</b></button></form></td>
+                          <td><p style="color:brown"><b>Denied</p></b></td>
                           <td><p></p></td>
                           <%}%> 
                         </tr>

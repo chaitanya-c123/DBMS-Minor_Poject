@@ -70,7 +70,7 @@
       <input type="text" readonly class="form-control-plaintext" id="userId" style="color:white" name="user" value="<%=user%>">
           <div class="form-row">
             <div class="form-group col-md-6">
-              <label for="inputEmail4"><b>Arrival Date</b></label>
+              <label for="inputEmail4"><b>Pickup Date</b></label>
               <input  type="string" class="form-control" name="arrdate"  placeholder="DD/MM/YYYY" required="true">
             </div>
             <div class="form-group col-md-6">
@@ -100,6 +100,7 @@
   </div>
   
 <br><br><br>
+<div class="container">
  <% if(previousBookings.length==0){%>
   <h4>OOPS!! You Have No Previous Bookings.</h4>
  <% }else{%>
@@ -147,7 +148,9 @@
 </table>
 </div>
  <% }%>
+</div>
 <br><br>
+<div class="container">
   <h3 style="color:#4C0027">Share Your experience</h3>
 <form class="text-start" action="/review/<%=user%>" method="post">
     <div class="form-group">
@@ -178,6 +181,7 @@
     </div>
  </div>
 <br><br>
+</div>
     </body>
 </html>
 <script src="/script.js"></script>
